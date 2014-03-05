@@ -22,12 +22,8 @@
 </body>
 </html>
 <script>
-	// var socket = io.connect('http://localhost:8000');
-	// socket.on('socket_test',function(){
-	// 	$('h1').html('发送完毕');
-	// })
-	// $('h1').click(function(){
-	// 	$('h1').html('发送数据。。。');
-	// 	socket.emit('back',1);
-	// })
+	var socket = io.connect('http://localhost:8000');
+	socket.on('do_arrive',function(data){
+		guest_arrive(data);
+	})
 </script>

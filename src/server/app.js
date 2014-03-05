@@ -17,11 +17,6 @@ io.set('log level',1)
 
 io.sockets.on('connection',function(socket){
 	console.log('socket_start');
-	io.sockets.emit('socket_test');
-	socket.on('back',function(data){
-		console.log(data);
-		socket.emit('socket_test');
-	})
 })
 
 
@@ -66,32 +61,57 @@ app.get('/event/:id/guests/arrived',function(req,res){
 });
 
 //event/:eid/guest/:id - GET a guest
-app.get('/evnent/:eid/guest/:id',function(req, res){
-  var sql;
-  console.log(req.params.eid);
-  if (req.params.id != undefined) {
-    sql = "SELECT * FROM " + settings.db_table + " WHERE id = " + req.params.id;
-    db.query(sql,function(err,rows){
-      if (!err) {
-        res.json({'status': 'success', 'body': rows[0]});
-      } else {
-        console.log(err);
-        res.json({'status': 'error','body': err.code});
-      }
+app.get('/evnent/:id/guest/:id',function(req, res){
+  	var sql;
+  	
+	sql = "SELECT * FROM " + settings.db_table + " WHERE qrcode_id LIKE " + "'" + req.params.id + "'";
+	console.log(sql);
+	db.query(sql,function(err,rows){
+	  if (!err) {
+	    res.json({'status': 'success', 'body': rows});
+	  } else {
+	    console.log(err);
+	    res.json({'status': 'error','body': err.code});
+	  }
     });
-  } else {
-    sql = "SELECT * FROM " + settings.db_table + " WHERE is_show = 1 ORDER BY id";
-    db.query(sql,function(err,rows){
-      if (!err) {
-        res.json({'status': 'success', 'body': rows});
-      } else {
-        console.log(err);
-        res.json({'status': 'error','body': err.code});
-      }
-    });
-  }
 });
 
+//event/:id/guests - PUT create a new guest
+app.put('/event/:eid/guests',function(req,res){
+	var item = {
+		qrcode_id:req.body.qrcode_id,
+		name:req.body.name
+	}
+	sql = "insert into " +settings.db_name+ " set ?"
+	db.query(sql,item,function(err,result){
+		if(err){
+			console.log(err.message);
+		}
+	})	
+})
+
+//event/:id/guest/:id - PUT update a guest , check
+app.put('/event/:eid/guest/:id',function(req,res){
+	var item = {
+		name:req.body.name,
+		is_arrived:req.body.is_arrived,
+		qrcode_id:req.body.qrcode_id,
+		photo_url:req.body.photo_url
+	}
+	sql = "update " +settings.db_table+ " set ? where qrcode_id = "+mysql.escape(req.body.qrcode_id);
+	db.query(sql,item,function(err,result){
+		if(err){
+			console.log(err.message);
+			res.json({'status': 'error', 'message':err.message});
+		} else {
+			io.sockets.emit('do_arrive',item);
+			res.json({'status': 'success'});
+		}
+	})	
+
+})
+
+//
 
 app.get('/',function(req,res){
 	res.sendfile("/index.html",{root:__dirname+'/public'});
