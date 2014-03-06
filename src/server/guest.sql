@@ -30,7 +30,7 @@ CREATE TABLE `guest` (
   `qrcode_id` varchar(20) DEFAULT NULL,
   `name` varchar(128) DEFAULT NULL,
   `photo_url` varchar(256) DEFAULT NULL,
-  `is_arrived` bit(11) DEFAULT b'0',
+  `is_arrived` int(11) DEFAULT 0,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `arrived_at` datetime DEFAULT NULL,

@@ -92,26 +92,65 @@ app.put('/event/:eid/guests',function(req,res){
 
 //event/:id/guest/:id - PUT update a guest , check
 app.put('/event/:eid/guest/:id',function(req,res){
-	var item = {
+
+	var new_name = req.body.qrcode_id + '.jpg';
+	var new_path = './public/img';
+	var full_name = new_path + "/" +new_name;
+	var node_path = 'img/'+new_name;
+	fs.exists(new_path,function(exist){
+		if(!exist){
+			fs.fs.mkdirSync(new_path);
+		}
+		var is = fs.fs.createReadStream(req.files.pic_data.path);
+		var os = fs.fs.createWriteStream(new_path);
+		is.pipe(os);
+		is.on('end',function(errs){
+			fs.fs.unlinkSync(req.files.pic_data.path);
+			if (!err){
+				var item = {
+					qrcode_id:req.body.qrcode_id,
+					name:req.body.name,
+					photo_url:node_path,
+					is_arrived:req.body.id_arrived
+				}
+				sql = "update " +settings.db_table+ " set ? where qrcode_id = "+mysql.escape(req.body.qrcode_id);
+				db.query(sql,item,function(err,result){
+					if(err){
+						console.log(err.message);
+						res.json({'status': 'error', 'message':err.message});
+					} else {
+						if ( req.body.id_arrived == 0 )
+							io.sockets.emit('do_arrive',item);
+						res.json({'status': 'success'});
+					}
+				})	
+			} else {
+				res.json({'status':'error','message':err.code})
+			}
+		})
+	});
+})
+
+var item = {
 		name:req.body.name,
 		is_arrived:req.body.is_arrived,
 		qrcode_id:req.body.qrcode_id,
-		photo_url:req.body.photo_url
+		photo_url:req.body.photo_url,
+
 	}
-	sql = "update " +settings.db_table+ " set ? where qrcode_id = "+mysql.escape(req.body.qrcode_id);
+	
+//event/:id/guest/:id - DELETE a guest
+app.delete('/event/:eid/guest/:id',function(req,res){
+	sql = "delete " +settings.db_table + " where qrcode_id = "+mysql.escape(req.body.qrcode_id);
 	db.query(sql,item,function(err,result){
 		if(err){
 			console.log(err.message);
 			res.json({'status': 'error', 'message':err.message});
 		} else {
-			io.sockets.emit('do_arrive',item);
 			res.json({'status': 'success'});
 		}
 	})	
-
 })
-
-//
 
 app.get('/',function(req,res){
 	res.sendfile("/index.html",{root:__dirname+'/public'});
