@@ -4,5 +4,6 @@
 	"db_name": "local_test",
 	"db_table": "guest",
 	"db_login": "root",
-	"db_pass": "root"
+	"db_pass": "root",
+	"server_port":"4000"
 }

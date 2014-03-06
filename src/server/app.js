@@ -35,8 +35,7 @@ app.get('/event/:id/guests',function(req,res){
 	db.query(sql,function(err,rows){
 	if (!err) {
         var arr = {};
-        arr['normal'] = rows;
-        res.json({'status': 'success', 'body': arr});
+        res.json({'status': 'success', 'body': rows});
       } else {
         console.log(err);
         res.json({'status': 'error','body': err.message});
@@ -78,9 +77,12 @@ app.get('/evnent/:id/guest/:id',function(req, res){
 
 //event/:id/guests - PUT create a new guest
 app.put('/event/:eid/guests',function(req,res){
+	var current_time = get_time();
 	var item = {
 		qrcode_id:req.body.qrcode_id,
-		name:req.body.name
+		name:req.body.name,
+		created_at:current_time(),
+		updated_at:current_time()
 	}
 	sql = "insert into " +settings.db_name+ " set ?"
 	db.query(sql,item,function(err,result){
@@ -96,6 +98,7 @@ app.put('/event/:eid/guest/:id',function(req,res){
 	var new_path = './public/img';
 	var full_name = new_path + "/" +new_name;
 	var node_path = 'img/'+new_name;
+	var current_time = get_time();
 	fs.exists(new_path,function(exist){
 		if(!exist){
 			fs.fs.mkdirSync(new_path);
@@ -110,7 +113,11 @@ app.put('/event/:eid/guest/:id',function(req,res){
 					qrcode_id:req.body.qrcode_id,
 					name:req.body.name,
 					photo_url:node_path,
-					is_arrived:req.body.id_arrived
+					is_arrived:req.body.id_arrived,
+					updated_at:current_time
+				}
+				if ( Number(item.is_arrived) == 1 ){
+					item.arrived_at = current_time
 				}
 				sql = "update " +settings.db_table+ " set ? where qrcode_id = "+mysql.escape(req.body.qrcode_id);
 				db.query(sql,item,function(err,result){
@@ -118,7 +125,7 @@ app.put('/event/:eid/guest/:id',function(req,res){
 						console.log(err.message);
 						res.json({'status': 'error', 'message':err.message});
 					} else {
-						if ( req.body.id_arrived != 0 )
+						if ( Number(item.id_arrived) == 1 )
 							io.sockets.emit('do_arrive',item);
 						res.json({'status': 'success'});
 					}
@@ -145,8 +152,6 @@ app.delete('/event/:eid/guest/:id',function(req,res){
 
 app.get('/',function(req,res){
 	res.sendfile("/index.html",{root:__dirname+'/public'});
-
-	
 	//do judgment and send data to web 
 });
 
@@ -156,12 +161,17 @@ function reload(){
 	db.query(sql,function(err,rows){
 	if (!err) {
         var arr = {};
-        arr['normal'] = rows;
         io.sockets.emit('reload',rows);
       } else {
         console.log(err);
       }
     });
+}
+
+function get_time(){
+	var date=new Date();
+	var dateString=(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":"+ d.getSeconds());
+	return dateString
 }
 
 // app.get("/guest/:id", function(req, res){
@@ -175,4 +185,4 @@ function reload(){
 //     // socket.emit("GUEST_CHANGED", obj); obj has qrcode_id, photo_url, is_arrived (if changed from 0 to 1)
 // });
 
-app.listen(8000);
+app.listen(4000);
