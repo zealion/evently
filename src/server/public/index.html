@@ -26,4 +26,9 @@
 	socket.on('do_arrive',function(data){
 		guest_arrive(data);
 	})
+	socket.on('reload',function(data){
+		for (var i = 0 ; i<data.length ; i++){
+			guest_arrive(data[i]);
+		}
+	})
 </script>

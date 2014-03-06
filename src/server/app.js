@@ -17,6 +17,7 @@ io.set('log level',1)
 
 io.sockets.on('connection',function(socket){
 	console.log('socket_start');
+	reload();
 })
 
 
@@ -45,9 +46,8 @@ app.get('/event/:id/guests',function(req,res){
 
 //event/:id/guests/arrived - GET all guests arrived
 app.get('/event/:id/guests/arrived',function(req,res){
-	console.log(req.params.id);
-	var sql = "SELECT * FROM " + settings.db_table + " where qrcode_id like '"+req.params.id+"%' and is_arrived = 1";
 	console.log(sql);
+	var sql = "SELECT * FROM " + settings.db_table + " where qrcode_id like '"+req.params.id+"%' and is_arrived = 1";
 	db.query(sql,function(err,rows){
 	if (!err) {
         var arr = {};
@@ -92,7 +92,6 @@ app.put('/event/:eid/guests',function(req,res){
 
 //event/:id/guest/:id - PUT update a guest , check
 app.put('/event/:eid/guest/:id',function(req,res){
-
 	var new_name = req.body.qrcode_id + '.jpg';
 	var new_path = './public/img';
 	var full_name = new_path + "/" +new_name;
@@ -119,7 +118,7 @@ app.put('/event/:eid/guest/:id',function(req,res){
 						console.log(err.message);
 						res.json({'status': 'error', 'message':err.message});
 					} else {
-						if ( req.body.id_arrived == 0 )
+						if ( req.body.id_arrived != 0 )
 							io.sockets.emit('do_arrive',item);
 						res.json({'status': 'success'});
 					}
@@ -130,14 +129,6 @@ app.put('/event/:eid/guest/:id',function(req,res){
 		})
 	});
 })
-
-var item = {
-		name:req.body.name,
-		is_arrived:req.body.is_arrived,
-		qrcode_id:req.body.qrcode_id,
-		photo_url:req.body.photo_url,
-
-	}
 	
 //event/:id/guest/:id - DELETE a guest
 app.delete('/event/:eid/guest/:id',function(req,res){
@@ -154,18 +145,34 @@ app.delete('/event/:eid/guest/:id',function(req,res){
 
 app.get('/',function(req,res){
 	res.sendfile("/index.html",{root:__dirname+'/public'});
+
+	
 	//do judgment and send data to web 
 });
 
-app.get("/guest/:id", function(req, res){
-	console.log(req.params.id);
-    // get qrcode_id, photo, is_arrived, etc. from req
 
-    // save photo
+function reload(){
+	var sql = "SELECT * FROM " + settings.db_table + " WHERE is_arrived = 1 ORDER BY rand() LIMIT 5"
+	db.query(sql,function(err,rows){
+	if (!err) {
+        var arr = {};
+        arr['normal'] = rows;
+        io.sockets.emit('reload',rows);
+      } else {
+        console.log(err);
+      }
+    });
+}
 
-    // update photo_url, is_arrived on qrcode_id
+// app.get("/guest/:id", function(req, res){
+// 	console.log(req.params.id);
+//     // get qrcode_id, photo, is_arrived, etc. from req
 
-    // socket.emit("GUEST_CHANGED", obj); obj has qrcode_id, photo_url, is_arrived (if changed from 0 to 1)
-});
+//     // save photo
+
+//     // update photo_url, is_arrived on qrcode_id
+
+//     // socket.emit("GUEST_CHANGED", obj); obj has qrcode_id, photo_url, is_arrived (if changed from 0 to 1)
+// });
 
 app.listen(8000);
