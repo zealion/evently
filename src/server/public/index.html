@@ -1,0 +1,34 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<link href="css/index.css" rel="stylesheet">    
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/index_test.js"></script>
+</head>
+<body>
+	<div class="content">
+		<div class="img-display">
+				<img class="img-item img-big img-1" guest_id="init" arrive="false" src="http://m3.img.papaapp.com/farm4/d/2012/0911/20/E338B821CB08C2FF9B30D3AAEAD6C00C_B500_900_500_707.JPEG">
+				<img class="img-item img-small img-2" guest_id="init" arrive="false" src="http://m3.img.papaapp.com/farm4/d/2012/0911/20/E338B821CB08C2FF9B30D3AAEAD6C00C_B500_900_500_707.JPEG">
+				<img class="img-item img-big img-3"  guest_id="init" arrive="false" src="http://m3.img.papaapp.com/farm4/d/2012/0911/20/E338B821CB08C2FF9B30D3AAEAD6C00C_B500_900_500_707.JPEG">
+				<img class="img-item img-big img-4" guest_id="init" arrive="false" src="http://m3.img.papaapp.com/farm4/d/2012/0911/20/E338B821CB08C2FF9B30D3AAEAD6C00C_B500_900_500_707.JPEG">
+				<img class="img-item img-small img-5" guest_id="init" arrive="false" src="http://m3.img.papaapp.com/farm4/d/2012/0911/20/E338B821CB08C2FF9B30D3AAEAD6C00C_B500_900_500_707.JPEG">
+				<img class="img-item img-small img-6" guest_id="init" arrive="false" src="http://m3.img.papaapp.com/farm4/d/2012/0911/20/E338B821CB08C2FF9B30D3AAEAD6C00C_B500_900_500_707.JPEG">
+		</div>
+	</div>
+	<div class="footer-mask">
+	</div>
+</body>
+</html>
+<script>
+	var socket = io.connect('http://localhost:8000');
+	socket.on('do_arrive',function(data){
+		guest_arrive(data);
+	})
+	socket.on('reload',function(data){
+		for (var i = 0 ; i<data.length ; i++){
+			guest_arrive(data[i]);
+		}
+	})
+</script>

@@ -1,0 +1,11 @@
+{
+	"name":"evently_server",
+	"version":"0.0.1",
+	"private":true,
+	"author":"zealion",
+	"dependencies":{
+		"express":"~2.5.8",
+		"mysql": "~2.0.0-alpha2",
+		"socket.io":"~0.9.6"
+	}
+}
