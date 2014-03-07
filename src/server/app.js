@@ -75,21 +75,70 @@ app.get('/evnent/:id/guest/:id',function(req, res){
     });
 });
 
-//event/:id/guests - PUT create a new guest
-app.put('/event/:eid/guests',function(req,res){
+//event/:id/guests - POST create a new guest
+app.post('/event/:eid/guests',function(req,res){
 	var current_time = get_time();
-	var item = {
-		qrcode_id:req.body.qrcode_id,
-		name:req.body.name,
-		created_at:current_time(),
-		updated_at:current_time()
-	}
-	sql = "insert into " +settings.db_name+ " set ?"
-	db.query(sql,item,function(err,result){
-		if(err){
-			console.log(err.message);
+	var new_name = req.body.qrcode_id + '.jpg';
+	var new_path = './public/img';
+	var full_name = new_path + "/" +new_name;
+	var node_path = 'img/'+new_name;
+	var current_time = get_time();
+	//insert or update
+	
+	fs.exists(new_path,function(exist){
+		if(!exist){
+			fs.mkdirSync(new_path);
 		}
-	})	
+		var is = fs.createReadStream(req.files.pic_data.path);
+		var os = fs.createWriteStream(full_name);
+		is.pipe(os);
+		is.on('end',function(errs){
+			fs.unlinkSync(req.files.pic_data.path);
+			if (!errs){
+				var item = {
+					qrcode_id:req.body.qrcode_id,
+					name:req.body.name,
+					email:req.body.email,
+					company:req.body.company,
+					created_at:current_time,
+					updated_at:current_time,
+					photo_url:node_path,
+					is_arrived:req.body.is_arrived
+				}
+				if ( Number(item.is_arrived) == 1 ){
+					item.is_arrived = 1;
+					item.arrived_at = current_time
+				}
+				sql = "select * from "+settings.db_table + ' where qrcode_id LIKE '+mysql.escape(req.body.qrcode_id);
+				db.query(sql,function(err,rows){
+					if(err){
+						console.log(err.message);
+						res.json({'status': 'error', 'message':err.message});
+					} else {
+
+						if (rows.length) {
+							sql = "update " +settings.db_table+ " set ? where qrcode_id LIKE "+mysql.escape(req.body.qrcode_id);			
+						} else {
+							sql = "insert into " +settings.db_table+ " set ?"
+						}
+						console.log(sql);
+						db.query(sql,item,function(err,result){
+							if(err){
+								console.log(err.message);
+								res.json({'status': 'error', 'message':err.message});
+							} else {
+								if ( Number(item.is_arrived) == 1 )
+									io.sockets.emit('do_arrive',item);
+								res.json({'status': 'success'});
+							}
+						})	
+					}
+				})
+			} else {
+				res.json({'status':'error','message':err.code})
+			}
+		})
+	});
 })
 
 //event/:id/guest/:id - PUT update a guest , check
@@ -100,7 +149,6 @@ app.post('/event/:eid/guest/:id',function(req,res){
 	var full_name = new_path + "/" +new_name;
 	var node_path = 'img/'+new_name;
 	var current_time = get_time();
-	console.log(req.files);
 	fs.exists(new_path,function(exist){
 		if(!exist){
 			fs.mkdirSync(new_path);
@@ -119,6 +167,7 @@ app.post('/event/:eid/guest/:id',function(req,res){
 					updated_at:current_time
 				}
 				if ( Number(item.is_arrived) == 1 ){
+					item.is_arrived = 1;
 					item.arrived_at = current_time
 				}
 				sql = "update " +settings.db_table+ " set ? where qrcode_id = "+mysql.escape(req.body.qrcode_id);

@@ -10,6 +10,14 @@ function getRandom(n)
 	return Math.floor(Math.random()*n+1)-1;
 }
 function guest_arrive(guest){
+	if($("[guest_id='"+guest.qrcode_id+"']").length > 0 ){
+		$("[guest_id='"+guest.qrcode_id+"']").fadeOut()
+			.attr('src',window.document.location.href+guest.photo_url)
+			.attr('arrive','true')
+			.attr('guest_id',guest.qrcode_id)
+			.fadeIn();	
+			return 
+	}
 	var sum = $("[arrive='false']").length-1;
 	if (sum != -1){
 		var img_id = getRandom(sum);
@@ -22,7 +30,7 @@ function guest_arrive(guest){
 		console.log('full');
 		var img_id = getRandom($('.img-item').length);
 		$("[arrive='true']:eq("+img_id+")").fadeOut()
-			.attr('src',guest.pic_path)
+			.attr('src',window.document.location.href+guest.photo_url)
 			.attr('arrive','true')
 			.attr('guest_id',guest.qrcode_id)
 			.fadeIn();	
@@ -30,7 +38,7 @@ function guest_arrive(guest){
 }
 function guest_left(guest){
 	$("[guest_id='"+guest.qrcode_id+"']").fadeOut()
-		.attr('src',guest_init.photo_url)
+		.attr('src','')
 		.attr('arrive','false')
 		.attr('guest_id','init')
 		.fadeIn();
