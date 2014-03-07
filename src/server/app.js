@@ -93,27 +93,29 @@ app.put('/event/:eid/guests',function(req,res){
 })
 
 //event/:id/guest/:id - PUT update a guest , check
-app.put('/event/:eid/guest/:id',function(req,res){
+app.post('/event/:eid/guest/:id',function(req,res){
+	console.log(req);
 	var new_name = req.body.qrcode_id + '.jpg';
 	var new_path = './public/img';
 	var full_name = new_path + "/" +new_name;
 	var node_path = 'img/'+new_name;
 	var current_time = get_time();
+	console.log(req.files);
 	fs.exists(new_path,function(exist){
 		if(!exist){
-			fs.fs.mkdirSync(new_path);
+			fs.mkdirSync(new_path);
 		}
-		var is = fs.fs.createReadStream(req.files.pic_data.path);
-		var os = fs.fs.createWriteStream(new_path);
+		var is = fs.createReadStream(req.files.pic_data.path);
+		var os = fs.createWriteStream(full_name);
 		is.pipe(os);
 		is.on('end',function(errs){
-			fs.fs.unlinkSync(req.files.pic_data.path);
-			if (!err){
+			fs.unlinkSync(req.files.pic_data.path);
+			if (!errs){
 				var item = {
 					qrcode_id:req.body.qrcode_id,
 					name:req.body.name,
 					photo_url:node_path,
-					is_arrived:req.body.id_arrived,
+					is_arrived:req.body.is_arrived,
 					updated_at:current_time
 				}
 				if ( Number(item.is_arrived) == 1 ){
@@ -125,7 +127,7 @@ app.put('/event/:eid/guest/:id',function(req,res){
 						console.log(err.message);
 						res.json({'status': 'error', 'message':err.message});
 					} else {
-						if ( Number(item.id_arrived) == 1 )
+						if ( Number(item.is_arrived) == 1 )
 							io.sockets.emit('do_arrive',item);
 						res.json({'status': 'success'});
 					}
@@ -169,7 +171,7 @@ function reload(){
 }
 
 function get_time(){
-	var date=new Date();
+	var d=new Date();
 	var dateString=(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":"+ d.getSeconds());
 	return dateString
 }

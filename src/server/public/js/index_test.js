@@ -1,5 +1,5 @@
 var guest_test = {
-	photo_url:'http://m3.img.papaapp.com/farm2/d/2011/1119/14/42703A6CD0BA04A9FECF5A74681907CD_B500_900_500_704.JPEG',
+	photo_url:'img/l_line.png',
 	qrcode_id:'nup20140001'
 }
 var guest_init = {
@@ -14,7 +14,7 @@ function guest_arrive(guest){
 	if (sum != -1){
 		var img_id = getRandom(sum);
 		$("[arrive='false']:eq("+img_id+")").fadeOut()
-			.attr('src',guest.photo_url)
+			.attr('src',window.document.location.href+guest.photo_url)
 			.attr('arrive','true')
 			.attr('guest_id',guest.qrcode_id)
 			.fadeIn();	
@@ -38,12 +38,13 @@ function guest_left(guest){
 
 function guest_update(){
 	$.ajax({
-	     type: "PUT",
+	     type: "put",
 	     url: "/event/1/guest/nup20140001",
-	     data: {name:'test',is_arrived:'1',qrcode_id:'nup20140001',photo_url:'test'},
+	     data: {name:'test',is_arrived:'1',qrcode_id:'nup20140001'},
 	     async:false,
 	     success: function(result){
 	     	console.log(result);
 	     }
 	 });
 }
+
