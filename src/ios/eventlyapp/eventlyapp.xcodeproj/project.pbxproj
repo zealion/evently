@@ -25,6 +25,7 @@
 		67B9A0D418C70F8D00321CAB /* ScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 67B9A0D318C70F8D00321CAB /* ScanViewController.m */; };
 		67B9A0D618C70FB800321CAB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67B9A0D518C70FB800321CAB /* AVFoundation.framework */; };
 		67D397C918CACDF600DF3DA6 /* SnapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 67D397C818CACDF600DF3DA6 /* SnapViewController.m */; };
+		67EDA20018CB5E8400FAD56D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 67EDA1FF18CB5E8400FAD56D /* Settings.bundle */; };
 		F2DEE857BE0745BE8B19ABA9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C204944E674451A36B9567 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -63,6 +64,7 @@
 		67B9A0D518C70FB800321CAB /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		67D397C718CACDF600DF3DA6 /* SnapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapViewController.h; sourceTree = "<group>"; };
 		67D397C818CACDF600DF3DA6 /* SnapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnapViewController.m; sourceTree = "<group>"; };
+		67EDA1FF18CB5E8400FAD56D /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		BAB73A252EE14ACF97896A33 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = ../Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -133,6 +135,7 @@
 			children = (
 				67B9A0AE18C7020400321CAB /* AppDelegate.h */,
 				67B9A0AF18C7020400321CAB /* AppDelegate.m */,
+				67EDA1FF18CB5E8400FAD56D /* Settings.bundle */,
 				67B9A0B418C7020400321CAB /* Images.xcassets */,
 				67B9A0B118C7020400321CAB /* eventlyapp.xcdatamodeld */,
 				67B9A0A618C7020400321CAB /* Supporting Files */,
@@ -254,6 +257,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				67B9A0AA18C7020400321CAB /* InfoPlist.strings in Resources */,
+				67EDA20018CB5E8400FAD56D /* Settings.bundle in Resources */,
 				67B9A0B518C7020400321CAB /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

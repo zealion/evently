@@ -219,9 +219,16 @@
 {
     NSData *imageToUpload = UIImageJPEGRepresentation(self.capturedPhotoView.image, 0.9);
     
+    NSString *event_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"event_id"];
+    NSMutableString *server_url = [[[NSUserDefaults standardUserDefaults] stringForKey:@"server_url"] mutableCopy];
+    if (![server_url hasSuffix:@"/"]) {
+        [[server_url mutableCopy] appendFormat:@"%c", '/'];
+    }
+    [server_url appendFormat:@"event/%@/guests", event_id];
+    
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     NSDictionary *parameters = @{@"qrcode_id": @"UNIP2014010002", @"is_arrived": @1};
-    [manager POST:@"http://192.168.0.104:4000/event/UNIP/guests/" parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+    [manager POST:server_url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFileData:imageToUpload name:@"pic_data" fileName:@"test.jpg" mimeType:@"image/jpg"];
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Success: %@", responseObject);

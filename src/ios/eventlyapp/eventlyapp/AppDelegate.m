@@ -21,6 +21,16 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSUserDefaults * standardUserDefaults = [NSUserDefaults standardUserDefaults];
+    NSString * server_url = [standardUserDefaults objectForKey:@"server_url"];
+    NSString * event_id = [standardUserDefaults objectForKey:@"event_id"];
+    if (!server_url || !event_id || [server_url isEqualToString:@"http://"]) {
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"错误" message:@"请检查App设置是否正确" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return NO;
+    }
+
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
