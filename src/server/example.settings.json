@@ -4,6 +4,6 @@
 	"db_name": "evently",
 	"db_table": "guest",
 	"db_login": "root",
-	"db_pass": "a123123"
+	"db_pass": "a123123",
 	"server_port":"4000"
 }
