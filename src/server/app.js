@@ -79,9 +79,9 @@ app.get('/evnent/:id/guest/:id',function(req, res){
 app.post('/event/:eid/guests',function(req,res){
 	var current_time = get_time();
 	var new_name = req.body.qrcode_id + '.jpg';
-	var new_path = './public/img';
+	var new_path = './public/uploads/photos';
 	var full_name = new_path + "/" +new_name;
-	var node_path = 'img/'+new_name;
+	var node_path = 'uploads/photos/'+new_name;
 	var current_time = get_time();
 	//insert or update
 	
@@ -145,9 +145,9 @@ app.post('/event/:eid/guests',function(req,res){
 app.post('/event/:eid/guest/:id',function(req,res){
 	console.log(req);
 	var new_name = req.body.qrcode_id + '.jpg';
-	var new_path = './public/img';
+	var new_path = './public/uploads/photos';
 	var full_name = new_path + "/" +new_name;
-	var node_path = 'img/'+new_name;
+	var node_path = 'uploads/photos/'+new_name;
 	var current_time = get_time();
 	fs.exists(new_path,function(exist){
 		if(!exist){
