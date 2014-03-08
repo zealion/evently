@@ -7,8 +7,11 @@
 //
 
 #import "AppDelegate.h"
-#import "ScanViewController.h"
 #import <AFHTTPRequestOperationManager.h>
+#import <Foundation/Foundation.h>
+
+#import "ScanViewController.h"
+#import "SnapViewController.h"
 
 @implementation AppDelegate
 
@@ -23,24 +26,32 @@
     self.window.backgroundColor = [UIColor whiteColor];
     
     
-    ScanViewController* vc = [[ScanViewController alloc] init];
+    //ScanViewController* vc = [[ScanViewController alloc] init];
+    //self.window.rootViewController = vc;
+    //vc.delegate = vc;
     
-    self.window.rootViewController = vc;
-    vc.delegate = vc;
+    SnapViewController* snap = [[SnapViewController alloc] init];
+    [snap.view setFrame:CGRectMake(100, 100, 300, 300)];
+    self.window.rootViewController = snap;
     
     [self.window makeKeyAndVisible];
 
     
-    [vc startScanning];
+    //[vc startScanning];
+    [snap startPreview];
     
     
+    /*
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:@"http://example.com/resources.json" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"JSON: %@", responseObject);
+    [manager GET:@"http://localhost:8000/event/UNIP/guests" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        BOOL success = [responseObject objectForKey:@"status"];
+        NSArray *myArray = [[responseObject objectForKey:@"body"] objectForKey:@"normal"];
+        
+        NSLog(@"got %i guests", [myArray count]);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
-
+     */ 
     
     return YES;
 }
