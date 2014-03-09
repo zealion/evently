@@ -19,6 +19,8 @@
 @property (strong, nonatomic) StartViewController *vc1;
 @property (strong, nonatomic) ScanViewController *vc2;
 @property (strong, nonatomic) SnapViewController *vc3;
+@property (strong, nonatomic) NSArray *guests;
+@property (strong, nonatomic) NSDictionary *currentGuest;
 
 @end
 
@@ -101,13 +103,13 @@
     [manager GET:server_url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         BOOL success = [responseObject objectForKey:@"status"];
         if(success){
-            NSArray *myArray = [responseObject objectForKey:@"body"];
+            self.guests = [responseObject objectForKey:@"body"];
             
             [self.vc1 enable];
             
             [UIApplication sharedApplication].networkActivityIndicatorVisible = FALSE;
             
-            NSLog(@"got %tu guests", [myArray count]);
+            NSLog(@"got %tu guests", [self.guests count]);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
@@ -139,13 +141,33 @@
     [self step2];
 }
 
-- (void) scanViewController:vc didSuccessfullyScan:(NSString *)aScannedValue {
-    NSLog(@"ID: %@", aScannedValue);
+- (void) scanViewController:vc didSuccessfullyScan:(NSString *)scannedId {
+    NSLog(@"ID: %@", scannedId);
     
-    NSString *name = [NSString stringWithFormat:@"姓名/Name: %@", @"ABC"];
-    NSString *company = [NSString stringWithFormat:@"公司/Company: %@", @"company"];
-    NSString *email = [NSString stringWithFormat:@"邮箱/Email %@", @"email"];
-    [vc scanValidated:YES withName:name company:company email:email];
+    __block BOOL found = NO;
+    __block NSDictionary *dict = nil;
+    
+    [self.guests enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        dict = (NSDictionary *)obj;
+        NSString *qrcode_id = [dict valueForKey:@"qrcode_id"];
+        if ([qrcode_id isEqualToString:scannedId]) {
+            found = YES;
+            *stop = YES;
+        }
+    }];
+    
+    if (found) {
+        NSString *name = [NSString stringWithFormat:@"姓名/Name:  %@", [[dict objectForKey:@"name"] isEqual:[NSNull null]]?@"":[dict valueForKey:@"name"]];
+        NSString *company = [NSString stringWithFormat:@"公司/Company:  %@", [[dict objectForKey: @"company"] isEqual:[NSNull null]]?@"":[dict valueForKey: @"company"]];
+        NSString *email = [NSString stringWithFormat:@"邮箱/Email:  %@", [[dict valueForKey: @"email"] isEqual:[NSNull null]]?@"":[dict valueForKey: @"email"]];
+        [vc scanValidated:YES withName:name company:company email:email];
+        
+        self.currentGuest = dict;
+    }
+    else
+    {
+        [vc scanValidated:NO withName:nil company:nil email:nil];
+    }
 }
 
 - (void) scanViewController:(ScanViewController *) vc didClickNextButton:(UIButton*) btn
@@ -156,16 +178,20 @@
 
 - (void) snapViewController:(SnapViewController *) vc didClickConfirmButton:(UIButton *)btn withJpegData:(NSData *)data
 {
+    if(self.currentGuest==nil) return;
+    
     NSString *event_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"event_id"];
     NSMutableString *server_url = [[[NSUserDefaults standardUserDefaults] stringForKey:@"server_url"] mutableCopy];
     if (![server_url hasSuffix:@"/"]) {
         [[server_url mutableCopy] appendFormat:@"%c", '/'];
     }
-    [server_url appendFormat:@"event/%@/guests", event_id];
+    
+    NSString *qrcode_id = [self.currentGuest valueForKey:@"qrcode_id"];
+    
+    [server_url appendFormat:@"event/%@/guest/%@", event_id, qrcode_id];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    NSDictionary *parameters = @{@"qrcode_id": @"UNIP2014010002", @"is_arrived": @1};
-    
+    NSDictionary *parameters = @{@"qrcode_id": qrcode_id, @"is_arrived": @1};
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = TRUE;
     [manager POST:server_url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
@@ -181,7 +207,5 @@
         NSLog(@"Error: %@", error);
     }];
 }
-
-
 
 @end
