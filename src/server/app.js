@@ -97,9 +97,6 @@ app.post('/event/:eid/guests',function(req,res){
 			if (!errs){
 				var item = {
 					qrcode_id:req.body.qrcode_id,
-					name:req.body.name,
-					email:req.body.email,
-					company:req.body.company,
 					created_at:current_time,
 					updated_at:current_time,
 					photo_url:node_path,
@@ -161,7 +158,6 @@ app.post('/event/:eid/guest/:id',function(req,res){
 			if (!errs){
 				var item = {
 					qrcode_id:req.body.qrcode_id,
-					name:req.body.name,
 					photo_url:node_path,
 					is_arrived:req.body.is_arrived,
 					updated_at:current_time
