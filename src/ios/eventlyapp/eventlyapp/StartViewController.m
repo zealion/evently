@@ -27,6 +27,14 @@
     return self;
 }
 
+- (void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self.indicator setHidden:NO];
+    [self.indicator startAnimating];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
