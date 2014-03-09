@@ -142,9 +142,9 @@
 - (void) scanViewController:vc didSuccessfullyScan:(NSString *)aScannedValue {
     NSLog(@"ID: %@", aScannedValue);
     
-    NSString *name = @"ABC";
-    NSString *company = @"company";
-    NSString *email = @"email";
+    NSString *name = [NSString stringWithFormat:@"姓名/Name: %@", @"ABC"];
+    NSString *company = [NSString stringWithFormat:@"公司/Company: %@", @"company"];
+    NSString *email = [NSString stringWithFormat:@"邮箱/Email %@", @"email"];
     [vc scanValidated:YES withName:name company:company email:email];
 }
 

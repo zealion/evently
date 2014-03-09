@@ -43,41 +43,15 @@
     if(![self isCameraAvailable]) {
         [self setupNoCameraView];
     }
-    
-    self.btnTake = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [self.btnTake addTarget:self action:@selector(capture) forControlEvents:UIControlEventTouchUpInside];
-    [self.btnTake setTitle:@"Capture" forState:UIControlStateNormal];
-    self.btnTake.frame = CGRectMake(400.0, 400.0, 80.0, 80.0);
-    [self.view addSubview:self.btnTake];
-
-    self.btnRetake = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [self.btnRetake addTarget:self action:@selector(clickBtnRetake:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-    [self.btnRetake setTitle:@"Re-Take" forState:UIControlStateNormal];
-    self.btnRetake.frame = CGRectMake(400.0, 500.0, 80.0, 80.0);
-    [self.view addSubview:self.btnRetake];
-    [self.btnRetake setHidden:YES];
-    
-    self.btnConfirm = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [self.btnConfirm addTarget:self action:@selector(clickBtnConfirm:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-    [self.btnConfirm setTitle:@"Confirm" forState:UIControlStateNormal];
-    self.btnConfirm.frame = CGRectMake(400.0, 600.0, 80.0, 80.0);
-    [self.view addSubview:self.btnConfirm];
-    [self.btnConfirm setHidden:YES];
-    
-    self.indicator = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    self.indicator.frame = CGRectMake(400.0, 600.0, 40.0, 40.0);
-    self.indicator.center = self.view.center;
-    [self.view addSubview:self.self.indicator];
-    [self.indicator bringSubviewToFront:self.view];
-    [self.indicator setHidden:YES];
+    [self recapture];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     if([self isCameraAvailable]) {
+        [self setupUI];
         [self setupCapture];
-        
         [self startPreview];
     }
 }
@@ -107,10 +81,47 @@
 #pragma mark -
 #pragma mark UI
 
+- (void) setupUI
+{
+    [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg"]]];
+    [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title3"]]];
+    
+    self.btnTake = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.btnTake.frame = CGRectMake(600.0, 480.0, 108.0, 108.0);
+    [self.btnTake setBackgroundImage:[UIImage imageNamed:@"btnTake"] forState:UIControlStateNormal];
+    [self.btnTake addTarget:self action:@selector(capture) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.btnTake];
+    
+    self.btnRetake = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.btnRetake.frame = CGRectMake(600.0, 480.0, 108.0, 108.0);
+    [self.btnRetake setBackgroundImage:[UIImage imageNamed:@"btnRetake"] forState:UIControlStateNormal];
+    [self.btnRetake addTarget:self action:@selector(clickBtnRetake:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.btnRetake];
+    [self.btnRetake setHidden:YES];
+    
+    self.btnConfirm = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.btnConfirm.frame = CGRectMake(600.0, 600.0, 108.0, 108.0);
+    [self.btnConfirm setBackgroundImage:[UIImage imageNamed:@"btnConfirm"] forState:UIControlStateNormal];
+    [self.btnConfirm addTarget:self action:@selector(clickBtnConfirm:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.btnConfirm];
+    [self.btnConfirm setHidden:YES];
+    
+    self.indicator = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.indicator.color = [UIColor whiteColor];
+    self.indicator.frame = CGRectMake(600.0, 600.0, 40.0, 40.0);
+    self.indicator.center = self.view.center;
+    [self.view addSubview:self.self.indicator];
+    [self.indicator bringSubviewToFront:self.view];
+    [self.indicator setHidden:YES];
+}
 
 - (void) recapture
 {
     [self.btnTake setHidden:NO];
+    [self.btnRetake setHidden:YES];
+    [self.btnConfirm setHidden:YES];
+    [self.preview setHidden:NO];
+    [self startPreview];
 }
 
 - (void) clickBtnRetake:(UIButton*)btn withEvent:(UIEvent*)event
@@ -139,7 +150,7 @@
 {
     UILabel *labelNoCam = [[UILabel alloc] init];
     labelNoCam.text = @"No Camera available";
-    labelNoCam.textColor = [UIColor blackColor];
+    labelNoCam.textColor = [UIColor whiteColor];
     [self.view addSubview:labelNoCam];
     [labelNoCam sizeToFit];
     labelNoCam.center = self.view.center;
@@ -165,12 +176,12 @@
     
     self.preview = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     self.preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    self.preview.frame = CGRectMake(100, 100, 300, 300);
+    self.preview.frame = CGRectMake(self.view.center.x-200, 200, 400, 400);
     
     AVCaptureConnection *con = self.preview.connection;
     con.videoOrientation = AVCaptureVideoOrientationPortrait;
     
-    [self.view.layer insertSublayer:self.preview atIndex:0];
+    [self.view.layer addSublayer:self.preview];
     
     self.capturedPhotoView = [[UIImageView alloc] initWithFrame:self.preview.frame];
     [self.capturedPhotoView setHidden:YES];

@@ -42,6 +42,7 @@
     if(![self isCameraAvailable]) {
         [self setupNoCameraView];
     }
+    [self rescan];
 }
 
 - (void) viewDidAppear:(BOOL)animated;
@@ -53,9 +54,9 @@
 {
     [super viewDidLoad];
     if([self isCameraAvailable]) {
+        [self setupUI];
         [self setupScanner];
-        [self setupUI]; // label container is on top of the scanning preview
-        
+        [self.view addSubview:self.container];
         [self startScanning];
     }
 }
@@ -80,30 +81,32 @@
 
 - (void) setupUI
 {
-    self.btnNext = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [self.btnNext addTarget:self action:@selector(clickBtnNext:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-    [self.btnNext setTitle:@"Next" forState:UIControlStateNormal];
-    self.btnNext.frame = CGRectMake(400.0, 700.0, 80.0, 80.0);
-    [self.view addSubview:self.btnNext];
-    [self.btnNext setHidden:YES];
+    [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg"]]];
+    [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title2"]]];
     
-    self.btnRescan = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    self.btnRescan = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.btnRescan.frame = CGRectMake(600.0, 480.0, 108.0, 108.0);
+    [self.btnRescan setBackgroundImage:[UIImage imageNamed:@"btnRescan"] forState:UIControlStateNormal];
     [self.btnRescan addTarget:self action:@selector(clickBtnRescan:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-    [self.btnRescan setTitle:@"Rescan" forState:UIControlStateNormal];
-    self.btnRescan.frame = CGRectMake(400.0, 800.0, 80.0, 80.0);
     [self.view addSubview:self.btnRescan];
     [self.btnRescan setHidden:YES];
     
+    self.btnNext = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.btnNext.frame = CGRectMake(600.0, 600.0, 108.0, 108.0);
+    [self.btnNext setBackgroundImage:[UIImage imageNamed:@"btnNext"] forState:UIControlStateNormal];
+    [self.btnNext addTarget:self action:@selector(clickBtnNext:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.btnNext];
+    [self.btnNext setHidden:YES];
+    
     [self.view addSubview:self.btnNext];
     [self.view addSubview:self.btnRescan];
     
-    self.container = [[UIView alloc] initWithFrame:CGRectMake(0,0, 400, 400)];
-    self.container.center = self.view.center;
+    self.container = [[UIView alloc] initWithFrame:CGRectMake(self.view.center.x-200, 200, 400, 400)];
     self.container.backgroundColor = [UIColor whiteColor];
     [self.container setHidden:YES];
     
-    self.lblMessage = [[UILabel alloc]initWithFrame:CGRectMake(30, 30, 300, 30)];
-    self.lblMessage.font = [UIFont fontWithName:@"hei" size:12];
+    self.lblMessage = [[UILabel alloc]initWithFrame:CGRectMake(40, 40, 300, 30)];
+    self.lblMessage.font = [UIFont fontWithName:@"hei" size:16];
     self.lblMessage.numberOfLines = 1;
     self.lblMessage.baselineAdjustment = UIBaselineAdjustmentAlignBaselines; // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
     self.lblMessage.adjustsFontSizeToFitWidth = YES;
@@ -114,8 +117,8 @@
     self.lblMessage.textAlignment = NSTextAlignmentLeft;
     [self.container addSubview:self.lblMessage];
     
-    self.lblName = [[UILabel alloc]initWithFrame:CGRectMake(100, 90, 270, 30)];
-    self.lblName.font = [UIFont fontWithName:@"hei" size:12];
+    self.lblName = [[UILabel alloc]initWithFrame:CGRectMake(40, 120, 270, 30)];
+    self.lblName.font = [UIFont fontWithName:@"hei" size:16];
     self.lblName.numberOfLines = 1;
     self.lblName.baselineAdjustment = UIBaselineAdjustmentAlignBaselines; // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
     self.lblName.adjustsFontSizeToFitWidth = YES;
@@ -126,8 +129,8 @@
     self.lblName.textAlignment = NSTextAlignmentLeft;
     [self.container addSubview:self.lblName];
     
-    self.lblCompany = [[UILabel alloc]initWithFrame:CGRectMake(100, 150, 270, 30)];
-    self.lblCompany.font = [UIFont fontWithName:@"hei" size:12];
+    self.lblCompany = [[UILabel alloc]initWithFrame:CGRectMake(40, 180, 270, 30)];
+    self.lblCompany.font = [UIFont fontWithName:@"hei" size:16];
     self.lblCompany.numberOfLines = 1;
     self.lblCompany.baselineAdjustment = UIBaselineAdjustmentAlignBaselines; // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
     self.lblCompany.adjustsFontSizeToFitWidth = YES;
@@ -138,8 +141,8 @@
     self.lblCompany.textAlignment = NSTextAlignmentLeft;
     [self.container addSubview:self.lblCompany];
     
-    self.lblEmail = [[UILabel alloc]initWithFrame:CGRectMake(100, 210, 270, 30)];
-    self.lblEmail.font = [UIFont fontWithName:@"hei" size:12];
+    self.lblEmail = [[UILabel alloc]initWithFrame:CGRectMake(40, 240, 270, 30)];
+    self.lblEmail.font = [UIFont fontWithName:@"hei" size:16];
     self.lblEmail.numberOfLines = 1;
     self.lblEmail.baselineAdjustment = UIBaselineAdjustmentAlignBaselines; // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
     self.lblEmail.adjustsFontSizeToFitWidth = YES;
@@ -154,8 +157,6 @@
     //[self.lblName setText:@"好看好看哈理工联合国"];
     //[self.lblCompany setText:@"苦哈哈给客户考虑更好"];
     //[self.lblEmail setText:@"hkhk@gkaga.com"];
-    
-    [self.view addSubview:self.container];
 }
 
 - (void) rescan
@@ -177,6 +178,7 @@
 
     if(valid)
     {
+        self.lblMessage.textColor = [UIColor blueColor];
         [self.lblMessage setText:@"二维码验证成功！"];
         [self.lblName setText:name];
         [self.lblCompany setText:company];
@@ -185,7 +187,7 @@
         [self.btnNext setHidden:NO];
     }
     else{
-        
+        self.lblMessage.textColor = [UIColor redColor];
         [self.lblMessage setText:@"无效的二维码！"];
         [self.lblName setText:@""];
         [self.lblCompany setText:@""];
@@ -263,13 +265,13 @@
     
     self.preview = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     self.preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    self.preview.frame = CGRectMake(self.view.center.x-200, self.view.center.y-200, 400, 400);
+    self.preview.frame = CGRectMake(self.view.center.x-200, 200, 400, 400);
     
     AVCaptureConnection *con = self.preview.connection;
     
     con.videoOrientation = AVCaptureVideoOrientationPortrait;
     
-    [self.view.layer insertSublayer:self.preview atIndex:0];
+    [self.view.layer addSublayer:self.preview];
 }
 
 #pragma mark -
