@@ -24,6 +24,9 @@
 		67B9A0C918C7020400321CAB /* eventlyappTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 67B9A0C818C7020400321CAB /* eventlyappTests.m */; };
 		67B9A0D418C70F8D00321CAB /* ScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 67B9A0D318C70F8D00321CAB /* ScanViewController.m */; };
 		67B9A0D618C70FB800321CAB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67B9A0D518C70FB800321CAB /* AVFoundation.framework */; };
+		67D397C918CACDF600DF3DA6 /* SnapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 67D397C818CACDF600DF3DA6 /* SnapViewController.m */; };
+		67EDA20018CB5E8400FAD56D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 67EDA1FF18CB5E8400FAD56D /* Settings.bundle */; };
+		67EDA20318CC0B6400FAD56D /* StartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 67EDA20218CC0B6400FAD56D /* StartViewController.m */; };
 		F2DEE857BE0745BE8B19ABA9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C204944E674451A36B9567 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -60,6 +63,11 @@
 		67B9A0D218C70F8D00321CAB /* ScanViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScanViewController.h; sourceTree = "<group>"; };
 		67B9A0D318C70F8D00321CAB /* ScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScanViewController.m; sourceTree = "<group>"; };
 		67B9A0D518C70FB800321CAB /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		67D397C718CACDF600DF3DA6 /* SnapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapViewController.h; sourceTree = "<group>"; };
+		67D397C818CACDF600DF3DA6 /* SnapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnapViewController.m; sourceTree = "<group>"; };
+		67EDA1FF18CB5E8400FAD56D /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		67EDA20118CC0B6400FAD56D /* StartViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartViewController.h; sourceTree = "<group>"; };
+		67EDA20218CC0B6400FAD56D /* StartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartViewController.m; sourceTree = "<group>"; };
 		BAB73A252EE14ACF97896A33 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = ../Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -130,11 +138,16 @@
 			children = (
 				67B9A0AE18C7020400321CAB /* AppDelegate.h */,
 				67B9A0AF18C7020400321CAB /* AppDelegate.m */,
+				67EDA1FF18CB5E8400FAD56D /* Settings.bundle */,
 				67B9A0B418C7020400321CAB /* Images.xcassets */,
 				67B9A0B118C7020400321CAB /* eventlyapp.xcdatamodeld */,
 				67B9A0A618C7020400321CAB /* Supporting Files */,
 				67B9A0D218C70F8D00321CAB /* ScanViewController.h */,
 				67B9A0D318C70F8D00321CAB /* ScanViewController.m */,
+				67D397C718CACDF600DF3DA6 /* SnapViewController.h */,
+				67D397C818CACDF600DF3DA6 /* SnapViewController.m */,
+				67EDA20118CC0B6400FAD56D /* StartViewController.h */,
+				67EDA20218CC0B6400FAD56D /* StartViewController.m */,
 			);
 			path = eventlyapp;
 			sourceTree = "<group>";
@@ -249,6 +262,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				67B9A0AA18C7020400321CAB /* InfoPlist.strings in Resources */,
+				67EDA20018CB5E8400FAD56D /* Settings.bundle in Resources */,
 				67B9A0B518C7020400321CAB /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -303,8 +317,10 @@
 			files = (
 				67B9A0B318C7020400321CAB /* eventlyapp.xcdatamodeld in Sources */,
 				67B9A0B018C7020400321CAB /* AppDelegate.m in Sources */,
+				67EDA20318CC0B6400FAD56D /* StartViewController.m in Sources */,
 				67B9A0AC18C7020400321CAB /* main.m in Sources */,
 				67B9A0D418C70F8D00321CAB /* ScanViewController.m in Sources */,
+				67D397C918CACDF600DF3DA6 /* SnapViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,7 +452,7 @@
 				GCC_PREFIX_HEADER = "eventlyapp/eventlyapp-Prefix.pch";
 				INFOPLIST_FILE = "eventlyapp/eventlyapp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "92160181-035E-4A24-ABB2-4C76B24DC663";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -453,7 +469,7 @@
 				GCC_PREFIX_HEADER = "eventlyapp/eventlyapp-Prefix.pch";
 				INFOPLIST_FILE = "eventlyapp/eventlyapp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "92160181-035E-4A24-ABB2-4C76B24DC663";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

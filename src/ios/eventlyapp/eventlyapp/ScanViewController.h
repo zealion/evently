@@ -11,7 +11,7 @@
 
 @protocol ScanViewControllerDelegate;
 
-@interface ScanViewController : UIViewController <AVCaptureMetadataOutputObjectsDelegate, ScanViewControllerDelegate>
+@interface ScanViewController : UIViewController <AVCaptureMetadataOutputObjectsDelegate>
 
 @property (nonatomic, weak) id<ScanViewControllerDelegate> delegate;
 
@@ -20,6 +20,8 @@
 - (BOOL) isCameraAvailable;
 - (void) startScanning;
 - (void) stopScanning;
+- (void) rescan;
+- (void) scanValidated:(BOOL)valid withName:(NSString*)name company:(NSString*)company email:(NSString*)email;
 - (void) setTourch:(BOOL) aStatus;
 
 @end
@@ -30,5 +32,7 @@
 
 - (void) scanViewController:(ScanViewController *) aCtler didTabToFocusOnPoint:(CGPoint) aPoint;
 - (void) scanViewController:(ScanViewController *) aCtler didSuccessfullyScan:(NSString *) aScannedValue;
+
+- (void) scanViewController:(ScanViewController *) vc didClickNextButton:(UIButton*) btn;
 
 @end

@@ -7,40 +7,46 @@
 //
 
 #import "AppDelegate.h"
-#import "ScanViewController.h"
 #import <AFHTTPRequestOperationManager.h>
+#import <Foundation/Foundation.h>
+
+#import "StartViewController.h"
+#import "ScanViewController.h"
+#import "SnapViewController.h"
+
+@interface AppDelegate ()
+
+@property (strong, nonatomic) StartViewController *vc1;
+@property (strong, nonatomic) ScanViewController *vc2;
+@property (strong, nonatomic) SnapViewController *vc3;
+
+@end
 
 @implementation AppDelegate
 
-@synthesize managedObjectContext = _managedObjectContext;
-@synthesize managedObjectModel = _managedObjectModel;
-@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // settings must present to start app
+    NSUserDefaults * standardUserDefaults = [NSUserDefaults standardUserDefaults];
+    NSMutableString * server_url = [[standardUserDefaults objectForKey:@"server_url"] mutableCopy];
+    NSString * event_id = [standardUserDefaults objectForKey:@"event_id"];
+    if (!server_url || !event_id || [server_url isEqualToString:@"http://"]) {
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"错误" message:@"请检查App设置是否正确" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return NO;
+    }
+
+    self.vc1 = [[StartViewController alloc] init];
+    self.vc2 = [[ScanViewController alloc] init];
+    self.vc3 = [[SnapViewController alloc] init];
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     
-    
-    ScanViewController* vc = [[ScanViewController alloc] init];
-    
-    self.window.rootViewController = vc;
-    vc.delegate = vc;
+    [self step1];
     
     [self.window makeKeyAndVisible];
-
-    
-    [vc startScanning];
-    
-    
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:@"http://example.com/resources.json" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"JSON: %@", responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-    }];
-
     
     return YES;
 }
@@ -69,103 +75,113 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    // Saves changes in the application's managed object context before the application terminates.
-    [self saveContext];
 }
 
-- (void)saveContext
-{
-    NSError *error = nil;
-    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
-    if (managedObjectContext != nil) {
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-             // Replace this implementation with code to handle the error appropriately.
-             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        } 
-    }
-}
+#pragma mark -
+#pragma mark viewcontroller transitions
 
-#pragma mark - Core Data stack
-
-// Returns the managed object context for the application.
-// If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
-- (NSManagedObjectContext *)managedObjectContext
+- (void) step1
 {
-    if (_managedObjectContext != nil) {
-        return _managedObjectContext;
-    }
+    self.window.rootViewController = self.vc1;
+    self.vc1.delegate = self;
     
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (coordinator != nil) {
-        _managedObjectContext = [[NSManagedObjectContext alloc] init];
-        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+    NSUserDefaults * standardUserDefaults = [NSUserDefaults standardUserDefaults];
+    NSMutableString * server_url = [[standardUserDefaults objectForKey:@"server_url"] mutableCopy];
+    NSString * event_id = [standardUserDefaults objectForKey:@"event_id"];
+
+    // get all guests
+    if (![server_url hasSuffix:@"/"]) {
+        [[server_url mutableCopy] appendFormat:@"%c", '/'];
     }
-    return _managedObjectContext;
+    [server_url appendFormat:@"event/%@/guests", event_id];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = TRUE;
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:server_url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        BOOL success = [responseObject objectForKey:@"status"];
+        if(success){
+            NSArray *myArray = [responseObject objectForKey:@"body"];
+            
+            [self.vc1 enable];
+            
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = FALSE;
+            
+            NSLog(@"got %tu guests", [myArray count]);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        [[[UIAlertView alloc] initWithTitle:@"错误" message:@"嘉宾数据读取失败，请退出重试！" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        
+        NSLog(@"Error: %@", error);
+    }];
+
 }
 
-// Returns the managed object model for the application.
-// If the model doesn't already exist, it is created from the application's model.
-- (NSManagedObjectModel *)managedObjectModel
+- (void) step2
 {
-    if (_managedObjectModel != nil) {
-        return _managedObjectModel;
+    self.window.rootViewController = self.vc2;
+    self.vc2.delegate = self;
+}
+
+- (void) step3
+{
+    self.window.rootViewController = self.vc3;
+    self.vc3.delegate = self;
+}
+
+#pragma mark -
+#pragma mark ViewController delegates
+
+- (void) startViewController:(StartViewController *) vc didClickStartButton:(UIButton*) btn
+{
+    [btn setHidden:YES];
+    [self step2];
+}
+
+- (void) scanViewController:vc didSuccessfullyScan:(NSString *)aScannedValue {
+    NSLog(@"ID: %@", aScannedValue);
+    
+    NSString *name = @"ABC";
+    NSString *company = @"company";
+    NSString *email = @"email";
+    [vc scanValidated:YES withName:name company:company email:email];
+}
+
+- (void) scanViewController:(ScanViewController *) vc didClickNextButton:(UIButton*) btn
+{
+    [btn setHidden:YES];
+    [self step3];
+}
+
+- (void) snapViewController:(SnapViewController *) vc didClickConfirmButton:(UIButton *)btn withJpegData:(NSData *)data
+{
+    NSString *event_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"event_id"];
+    NSMutableString *server_url = [[[NSUserDefaults standardUserDefaults] stringForKey:@"server_url"] mutableCopy];
+    if (![server_url hasSuffix:@"/"]) {
+        [[server_url mutableCopy] appendFormat:@"%c", '/'];
     }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"eventlyapp" withExtension:@"momd"];
-    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-    return _managedObjectModel;
+    [server_url appendFormat:@"event/%@/guests", event_id];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSDictionary *parameters = @{@"qrcode_id": @"UNIP2014010002", @"is_arrived": @1};
+    
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = TRUE;
+    [manager POST:server_url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        [formData appendPartWithFileData:data name:@"pic_data" fileName:@"test.jpg" mimeType:@"image/jpg"];
+    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"Success: %@", responseObject);
+        
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = FALSE;
+
+        [self step1];
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
 }
 
-// Returns the persistent store coordinator for the application.
-// If the coordinator doesn't already exist, it is created and the application's store added to it.
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
-{
-    if (_persistentStoreCoordinator != nil) {
-        return _persistentStoreCoordinator;
-    }
-    
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"eventlyapp.sqlite"];
-    
-    NSError *error = nil;
-    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
-        /*
-         Replace this implementation with code to handle the error appropriately.
-         
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-         
-         Typical reasons for an error here include:
-         * The persistent store is not accessible;
-         * The schema for the persistent store is incompatible with current managed object model.
-         Check the error message to determine what the actual problem was.
-         
-         
-         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
-         
-         If you encounter schema incompatibility errors during development, you can reduce their frequency by:
-         * Simply deleting the existing store:
-         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
-         
-         * Performing automatic lightweight migration by passing the following dictionary as the options parameter:
-         @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
-         
-         Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
-         
-         */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }    
-    
-    return _persistentStoreCoordinator;
-}
 
-#pragma mark - Application's Documents directory
-
-// Returns the URL to the application's Documents directory.
-- (NSURL *)applicationDocumentsDirectory
-{
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-}
 
 @end
