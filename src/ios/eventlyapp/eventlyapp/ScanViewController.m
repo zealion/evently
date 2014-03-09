@@ -16,6 +16,7 @@
 @property (strong, nonatomic) AVCaptureSession* session;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer* preview;
 
+@property (strong, nonatomic) UIButton *btnBack;
 @property (strong, nonatomic) UIButton *btnRescan;
 @property (strong, nonatomic) UIButton *btnNext;
 @property (strong, nonatomic) UILabel *lblName;
@@ -61,6 +62,11 @@
     }
 }
 
+- (void) viewWillDisappear:(BOOL)animated
+{
+    [self stopScanning];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -83,6 +89,12 @@
 {
     [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg"]]];
     [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title2"]]];
+
+    self.btnBack = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.btnBack.frame = CGRectMake(20.0, 20.0, 56.0, 56.0);
+    [self.btnBack setBackgroundImage:[UIImage imageNamed:@"btnBack"] forState:UIControlStateNormal];
+    [self.btnBack addTarget:self action:@selector(clickBtnBack) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.btnBack];
     
     self.btnRescan = [UIButton buttonWithType:UIButtonTypeCustom];
     self.btnRescan.frame = CGRectMake(600.0, 480.0, 108.0, 108.0);
@@ -101,8 +113,8 @@
     [self.view addSubview:self.btnNext];
     [self.view addSubview:self.btnRescan];
     
-    self.container = [[UIView alloc] initWithFrame:CGRectMake(self.view.center.x-200, 200, 400, 400)];
-    self.container.backgroundColor = [UIColor whiteColor];
+    self.container = [[UIView alloc] initWithFrame:CGRectMake(self.view.center.x-200, 550, 400, 400)];
+    //self.container.backgroundColor = [UIColor whiteColor];
     [self.container setHidden:YES];
     
     self.lblMessage = [[UILabel alloc]initWithFrame:CGRectMake(40, 40, 300, 30)];
@@ -113,43 +125,43 @@
     self.lblMessage.minimumScaleFactor = 10.0f/12.0f;
     self.lblMessage.clipsToBounds = YES;
     self.lblMessage.backgroundColor = [UIColor clearColor];
-    self.lblMessage.textColor = [UIColor blackColor];
+    self.lblMessage.textColor = [UIColor whiteColor];
     self.lblMessage.textAlignment = NSTextAlignmentLeft;
-    [self.container addSubview:self.lblMessage];
+    //[self.container addSubview:self.lblMessage];
     
-    self.lblName = [[UILabel alloc]initWithFrame:CGRectMake(40, 120, 270, 30)];
-    self.lblName.font = [UIFont fontWithName:@"hei" size:16];
+    self.lblName = [[UILabel alloc]initWithFrame:CGRectMake(40, 100, 270, 30)];
+    self.lblName.font = [UIFont fontWithName:@"hei" size:20];
     self.lblName.numberOfLines = 1;
     self.lblName.baselineAdjustment = UIBaselineAdjustmentAlignBaselines; // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
     self.lblName.adjustsFontSizeToFitWidth = YES;
     self.lblName.minimumScaleFactor = 10.0f/12.0f;
     self.lblName.clipsToBounds = YES;
     self.lblName.backgroundColor = [UIColor clearColor];
-    self.lblName.textColor = [UIColor blackColor];
+    self.lblName.textColor = [UIColor whiteColor];
     self.lblName.textAlignment = NSTextAlignmentLeft;
     [self.container addSubview:self.lblName];
     
-    self.lblCompany = [[UILabel alloc]initWithFrame:CGRectMake(40, 180, 270, 30)];
-    self.lblCompany.font = [UIFont fontWithName:@"hei" size:16];
+    self.lblCompany = [[UILabel alloc]initWithFrame:CGRectMake(40, 150, 270, 30)];
+    self.lblCompany.font = [UIFont fontWithName:@"hei" size:20];
     self.lblCompany.numberOfLines = 1;
     self.lblCompany.baselineAdjustment = UIBaselineAdjustmentAlignBaselines; // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
     self.lblCompany.adjustsFontSizeToFitWidth = YES;
     self.lblCompany.minimumScaleFactor = 10.0f/12.0f;
     self.lblCompany.clipsToBounds = YES;
     self.lblCompany.backgroundColor = [UIColor clearColor];
-    self.lblCompany.textColor = [UIColor blackColor];
+    self.lblCompany.textColor = [UIColor whiteColor];
     self.lblCompany.textAlignment = NSTextAlignmentLeft;
     [self.container addSubview:self.lblCompany];
     
-    self.lblEmail = [[UILabel alloc]initWithFrame:CGRectMake(40, 240, 270, 30)];
-    self.lblEmail.font = [UIFont fontWithName:@"hei" size:16];
+    self.lblEmail = [[UILabel alloc]initWithFrame:CGRectMake(40, 200, 270, 30)];
+    self.lblEmail.font = [UIFont fontWithName:@"hei" size:20];
     self.lblEmail.numberOfLines = 1;
     self.lblEmail.baselineAdjustment = UIBaselineAdjustmentAlignBaselines; // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
     self.lblEmail.adjustsFontSizeToFitWidth = YES;
     self.lblEmail.minimumScaleFactor = 10.0f/12.0f;
     self.lblEmail.clipsToBounds = YES;
     self.lblEmail.backgroundColor = [UIColor clearColor];
-    self.lblEmail.textColor = [UIColor blackColor];
+    self.lblEmail.textColor = [UIColor whiteColor];
     self.lblEmail.textAlignment = NSTextAlignmentLeft;
     [self.container addSubview:self.lblEmail];
     
@@ -194,6 +206,13 @@
         [self.lblEmail setText:@""];
         [self.btnNext setHidden:YES];
         [self.container setHidden:NO];
+    }
+}
+
+- (void) clickBtnBack
+{
+    if([self.delegate respondsToSelector:@selector(scanViewController:didClickBackButton:)]) {
+        [self.delegate scanViewController:self didClickBackButton:self.btnBack];
     }
 }
 

@@ -19,6 +19,7 @@
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer* preview;
 @property (strong, nonatomic) UIImageView *capturedPhotoView;
 
+@property (strong, nonatomic) UIButton *btnBack;
 @property (strong, nonatomic) UIButton *btnTake;
 @property (strong, nonatomic) UIButton *btnRetake;
 @property (strong, nonatomic) UIButton *btnConfirm;
@@ -60,6 +61,8 @@
 {
     [self.indicator stopAnimating];
     [self.indicator setHidden:YES];
+    
+    [self.session stopRunning];
 }
 
 - (NSUInteger)supportedInterfaceOrientations;
@@ -85,6 +88,12 @@
 {
     [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg"]]];
     [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title3"]]];
+    
+    self.btnBack = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.btnBack.frame = CGRectMake(20.0, 20.0, 56.0, 56.0);
+    [self.btnBack setBackgroundImage:[UIImage imageNamed:@"btnBack"] forState:UIControlStateNormal];
+    [self.btnBack addTarget:self action:@selector(clickBtnBack) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.btnBack];
     
     self.btnTake = [UIButton buttonWithType:UIButtonTypeCustom];
     self.btnTake.frame = CGRectMake(600.0, 480.0, 108.0, 108.0);
@@ -117,11 +126,19 @@
 
 - (void) recapture
 {
-    [self.btnTake setHidden:NO];
+    [self.preview setHidden:NO];
+    [self.capturedPhotoView setHidden:YES];
     [self.btnRetake setHidden:YES];
     [self.btnConfirm setHidden:YES];
-    [self.preview setHidden:NO];
     [self startPreview];
+    [self.btnTake setHidden:NO];
+}
+
+- (void) clickBtnBack
+{
+    if([self.delegate respondsToSelector:@selector(snapViewController:didClickBackButton:)]) {
+        [self.delegate snapViewController:self didClickBackButton:self.btnBack];
+    }
 }
 
 - (void) clickBtnRetake:(UIButton*)btn withEvent:(UIEvent*)event

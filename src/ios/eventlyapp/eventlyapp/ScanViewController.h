@@ -33,6 +33,7 @@
 - (void) scanViewController:(ScanViewController *) aCtler didTabToFocusOnPoint:(CGPoint) aPoint;
 - (void) scanViewController:(ScanViewController *) aCtler didSuccessfullyScan:(NSString *) aScannedValue;
 
+- (void) scanViewController:(ScanViewController *) vc didClickBackButton:(UIButton*) btn;
 - (void) scanViewController:(ScanViewController *) vc didClickNextButton:(UIButton*) btn;
 
 @end

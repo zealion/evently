@@ -23,6 +23,7 @@
 
 @protocol SnapViewControllerDelegate <NSObject>
 
+- (void) snapViewController:(SnapViewController *) vc didClickBackButton:(UIButton*) btn;
 - (void) snapViewController:(SnapViewController *) vc didClickConfirmButton:(UIButton*) btn withJpegData:(NSData*)data;
 
 @end

@@ -170,6 +170,16 @@
     }
 }
 
+- (void) scanViewController:(ScanViewController *) vc didClickBackButton:(UIButton*) btn
+{
+    [self step1];
+}
+
+- (void) snapViewController:(ScanViewController *) vc didClickBackButton:(UIButton*) btn
+{
+    [self step2];
+}
+
 - (void) scanViewController:(ScanViewController *) vc didClickNextButton:(UIButton*) btn
 {
     [btn setHidden:YES];
