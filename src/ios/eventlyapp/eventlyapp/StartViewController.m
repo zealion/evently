@@ -27,20 +27,31 @@
     return self;
 }
 
+- (void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self.indicator setHidden:NO];
+    [self.indicator startAnimating];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg"]]];
+    [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title1"]]];
 
-    self.btnStart = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    self.btnStart = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.btnStart.frame = CGRectMake(550.0, 550.0, 108.0, 108.0);
+    [self.btnStart setBackgroundImage:[UIImage imageNamed:@"btnStart"] forState:UIControlStateNormal];
     [self.btnStart addTarget:self action:@selector(clickBtnStart:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-    [self.btnStart setTitle:@"Start" forState:UIControlStateNormal];
-    self.btnStart.frame = CGRectMake(0.0, 0.0, 80.0, 80.0);
-    self.btnStart.center = self.view.center;
     [self.view addSubview:self.btnStart];
     [self.btnStart setHidden:YES];
     
     self.indicator = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.indicator.frame = CGRectMake(0.0, 0.0, 40.0, 40.0);
+    self.indicator.color = [UIColor whiteColor];
     self.indicator.center = self.view.center;
     [self.view addSubview:self.self.indicator];
     [self.indicator bringSubviewToFront:self.view];
