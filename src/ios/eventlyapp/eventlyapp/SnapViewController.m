@@ -134,6 +134,7 @@
 
 - (void) clickBtnConfirm:(UIButton*)btn withEvent:(UIEvent*)event
 {
+    [self.btnRetake setHidden:YES];
     [self.btnConfirm setHidden:YES];
     [self.indicator setHidden:NO];
     [self.indicator startAnimating];
