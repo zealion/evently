@@ -3,7 +3,7 @@ var fs = require('fs');
 var app = module.exports = express.createServer();
 var io = require('socket.io').listen(app);
 var mysql = require('mysql');
-var settings = require('./settings');
+var settings = require('./example.settings');
 
 var db = mysql.createConnection({
   host: settings.db_host,
