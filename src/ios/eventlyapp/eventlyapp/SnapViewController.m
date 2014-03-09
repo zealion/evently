@@ -19,6 +19,11 @@
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer* preview;
 @property (strong, nonatomic) UIImageView *capturedPhotoView;
 
+@property (strong, nonatomic) UIButton *btnTake;
+@property (strong, nonatomic) UIButton *btnRetake;
+@property (strong, nonatomic) UIButton *btnConfirm;
+@property (strong, nonatomic) UIActivityIndicatorView *indicator;
+
 @end
 
 @implementation SnapViewController
@@ -39,23 +44,32 @@
         [self setupNoCameraView];
     }
     
-    UIButton *btnTake = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [btnTake addTarget:self action:@selector(capture) forControlEvents:UIControlEventTouchUpInside];
-    [btnTake setTitle:@"Capture" forState:UIControlStateNormal];
-    btnTake.frame = CGRectMake(400.0, 400.0, 80.0, 80.0);
-    [self.view addSubview:btnTake];
+    self.btnTake = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [self.btnTake addTarget:self action:@selector(capture) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnTake setTitle:@"Capture" forState:UIControlStateNormal];
+    self.btnTake.frame = CGRectMake(400.0, 400.0, 80.0, 80.0);
+    [self.view addSubview:self.btnTake];
 
-    UIButton *btnRetake = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [btnRetake addTarget:self action:@selector(recapture) forControlEvents:UIControlEventTouchUpInside];
-    [btnRetake setTitle:@"Re-Take" forState:UIControlStateNormal];
-    btnRetake.frame = CGRectMake(400.0, 500.0, 80.0, 80.0);
-    [self.view addSubview:btnRetake];
+    self.btnRetake = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [self.btnRetake addTarget:self action:@selector(clickBtnRetake:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnRetake setTitle:@"Re-Take" forState:UIControlStateNormal];
+    self.btnRetake.frame = CGRectMake(400.0, 500.0, 80.0, 80.0);
+    [self.view addSubview:self.btnRetake];
+    [self.btnRetake setHidden:YES];
     
-    UIButton *btnConfirm = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [btnConfirm addTarget:self action:@selector(confirm) forControlEvents:UIControlEventTouchUpInside];
-    [btnConfirm setTitle:@"Confirm" forState:UIControlStateNormal];
-    btnConfirm.frame = CGRectMake(400.0, 600.0, 80.0, 80.0);
-    [self.view addSubview:btnConfirm];
+    self.btnConfirm = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [self.btnConfirm addTarget:self action:@selector(clickBtnConfirm:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnConfirm setTitle:@"Confirm" forState:UIControlStateNormal];
+    self.btnConfirm.frame = CGRectMake(400.0, 600.0, 80.0, 80.0);
+    [self.view addSubview:self.btnConfirm];
+    [self.btnConfirm setHidden:YES];
+    
+    self.indicator = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.indicator.frame = CGRectMake(400.0, 600.0, 40.0, 40.0);
+    self.indicator.center = self.view.center;
+    [self.view addSubview:self.self.indicator];
+    [self.indicator bringSubviewToFront:self.view];
+    [self.indicator setHidden:YES];
 }
 
 - (void)viewDidLoad
@@ -63,7 +77,15 @@
     [super viewDidLoad];
     if([self isCameraAvailable]) {
         [self setupCapture];
+        
+        [self startPreview];
     }
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [self.indicator stopAnimating];
+    [self.indicator setHidden:YES];
 }
 
 - (NSUInteger)supportedInterfaceOrientations;
@@ -83,6 +105,47 @@
 }
 
 #pragma mark -
+#pragma mark UI
+
+
+- (void) recapture
+{
+    [self.btnTake setHidden:NO];
+}
+
+- (void) clickBtnRetake:(UIButton*)btn withEvent:(UIEvent*)event
+{
+    [self.btnRetake setHidden:YES];
+    [self.btnConfirm setHidden:YES];
+    [self performSelector:@selector(startPreview) withObject:nil afterDelay:0.001];
+    [self performSelector:@selector(recapture) withObject:nil afterDelay:0.002];
+}
+
+- (void) clickBtnConfirm:(UIButton*)btn withEvent:(UIEvent*)event
+{
+    [self.btnConfirm setHidden:YES];
+    [self.indicator setHidden:NO];
+    [self.indicator startAnimating];
+    
+    NSData *imageToUpload = UIImageJPEGRepresentation(self.capturedPhotoView.image, 0.9);
+    
+    if(self.delegate && [self.delegate respondsToSelector:@selector(snapViewController:didClickConfirmButton:withJpegData:)])
+    {
+        [self.delegate snapViewController:self didClickConfirmButton:btn withJpegData:imageToUpload];
+    }
+}
+
+- (void) setupNoCameraView;
+{
+    UILabel *labelNoCam = [[UILabel alloc] init];
+    labelNoCam.text = @"No Camera available";
+    labelNoCam.textColor = [UIColor blackColor];
+    [self.view addSubview:labelNoCam];
+    [labelNoCam sizeToFit];
+    labelNoCam.center = self.view.center;
+}
+
+#pragma mark -
 #pragma mark AVFoundationSetup
 
 - (void) setupCapture;
@@ -99,10 +162,6 @@
 
     [self.session addOutput:self.output];
     [self.session addInput:self.backCameraInput];
-    
-    
-    //[self.output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
-    //self.output.metadataObjectTypes = @[AVMetadataObjectTypeQRCode];
     
     self.preview = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     self.preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
@@ -148,14 +207,12 @@
     [self.session commitConfiguration];
 }
 
-- (void) recapture
-{
-    [self.capturedPhotoView setHidden:NO];
-    [self startPreview];
-}
-
 - (void) capture
 {
+    [self.btnTake setHidden:YES];
+    [self.indicator setHidden:NO];
+    [self.indicator startAnimating];
+    
     AVCaptureConnection *videoConnection = nil;
     for (AVCaptureConnection *connection in self.output.connections)
     {
@@ -211,30 +268,14 @@
          [self.capturedPhotoView setHidden:NO];
          self.capturedPhotoView.image = image2;
          
-         UIImageWriteToSavedPhotosAlbum(image2, nil, nil, nil);
+         // test save to album
+         //UIImageWriteToSavedPhotosAlbum(image2, nil, nil, nil);
+         
+         [self.btnConfirm setHidden:NO];
+         [self.btnRetake setHidden:NO];
+         [self.indicator stopAnimating];
+         [self.indicator setHidden:YES];
      }];
-}
-
-- (void) confirm
-{
-    NSData *imageToUpload = UIImageJPEGRepresentation(self.capturedPhotoView.image, 0.9);
-    
-    NSString *event_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"event_id"];
-    NSMutableString *server_url = [[[NSUserDefaults standardUserDefaults] stringForKey:@"server_url"] mutableCopy];
-    if (![server_url hasSuffix:@"/"]) {
-        [[server_url mutableCopy] appendFormat:@"%c", '/'];
-    }
-    [server_url appendFormat:@"event/%@/guests", event_id];
-    
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    NSDictionary *parameters = @{@"qrcode_id": @"UNIP2014010002", @"is_arrived": @1};
-    [manager POST:server_url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-        [formData appendPartWithFileData:imageToUpload name:@"pic_data" fileName:@"test.jpg" mimeType:@"image/jpg"];
-    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"Success: %@", responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-    }];
 }
 
 - (UIImage *)scaleAndRotateImage:(UIImage *)image {
@@ -343,19 +384,6 @@
     UIGraphicsEndImageContext();
     
     return imageCopy;
-}
-
-#pragma mark -
-#pragma mark NoCamAvailable
-
-- (void) setupNoCameraView;
-{
-    UILabel *labelNoCam = [[UILabel alloc] init];
-    labelNoCam.text = @"No Camera available";
-    labelNoCam.textColor = [UIColor blackColor];
-    [self.view addSubview:labelNoCam];
-    [labelNoCam sizeToFit];
-    labelNoCam.center = self.view.center;
 }
 
 @end

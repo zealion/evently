@@ -9,11 +9,20 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
+@protocol SnapViewControllerDelegate;
+
 @interface SnapViewController : UIViewController
 
+@property (nonatomic, weak) id<SnapViewControllerDelegate> delegate;
 - (BOOL) isCameraAvailable;
 - (void) startPreview;
 - (void) stopPreview;
 - (void) capture;
+
+@end
+
+@protocol SnapViewControllerDelegate <NSObject>
+
+- (void) snapViewController:(SnapViewController *) vc didClickConfirmButton:(UIButton*) btn withJpegData:(NSData*)data;
 
 @end

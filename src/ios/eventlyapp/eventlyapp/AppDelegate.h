@@ -7,17 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "StartViewController.h"
 #import "ScanViewController.h"
+#import "SnapViewController.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, ScanViewControllerDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, ScanViewControllerDelegate, StartViewControllerDelegate, SnapViewControllerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
-@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
-@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-
-- (void)saveContext;
-- (NSURL *)applicationDocumentsDirectory;
 
 @end
