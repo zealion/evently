@@ -141,15 +141,15 @@ app.post('/event/:eid/guests',function(req,res){
 	});
 })
 
-//event/:id/guest/:id - PUT update a guest , check
+//event/:id/guest/:id - post update a guest , check
 app.post('/event/:eid/guest/:id',function(req,res){
-	console.log(req);
 	var new_name = req.body.qrcode_id + '.jpg';
 	var new_path = './public/uploads/photos';
 	var full_name = new_path + "/" +new_name;
 	var node_path = 'uploads/photos/'+new_name;
 	var current_time = get_time();
 	fs.exists(new_path,function(exist){
+		console.log(exist);
 		if(!exist){
 			fs.mkdirSync(new_path);
 		}
@@ -205,10 +205,13 @@ app.get('/',function(req,res){
 	res.sendfile("/index.html",{root:__dirname+'/public'});
 	//do judgment and send data to web 
 });
-
+app.get('/api_test',function(req,res){
+	res.sendfile("/index_test.html",{root:__dirname+'/public'});
+	//do api_test
+});
 
 function reload(){
-	var sql = "SELECT * FROM " + settings.db_table + " WHERE is_arrived = 1 ORDER BY rand() LIMIT 5"
+	var sql = "SELECT * FROM " + settings.db_table + " WHERE is_arrived = 1 ORDER BY rand() LIMIT 6"
 	db.query(sql,function(err,rows){
 	if (!err) {
         var arr = {};
