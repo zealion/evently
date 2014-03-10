@@ -1,9 +1,9 @@
 var guest_test = {
-	photo_url:'img/l_line.png',
+	photo_url:'uploads/photos/UNIP2014010405.jpg',
 	qrcode_id:'nup20140001'
 }
 var guest_init = {
-	photo_url:'http://m3.img.papaapp.com/farm4/d/2012/0911/20/E338B821CB08C2FF9B30D3AAEAD6C00C_B500_900_500_707.JPEG'
+	photo_url:'img/tx.png'
 }
 function getRandom(n)
 {
@@ -15,7 +15,10 @@ function guest_arrive(guest){
 			.attr('src',window.document.location.href+guest.photo_url)
 			.attr('arrive','true')
 			.attr('guest_id',guest.qrcode_id)
-			.fadeIn();	
+			.load(function(){
+				console.log('load=ok');
+				$(this).fadeIn().show();	
+			})
 			return 
 	}
 	var sum = $("[arrive='false']").length-1;
@@ -25,7 +28,11 @@ function guest_arrive(guest){
 			.attr('src',window.document.location.href+guest.photo_url)
 			.attr('arrive','true')
 			.attr('guest_id',guest.qrcode_id)
-			.fadeIn();	
+			.load(function(){
+				console.log('load=ok');
+				$(this).fadeIn().show();	
+			})
+			
 	} else {
 		console.log('full');
 		var img_id = getRandom($('.img-item').length);
@@ -33,7 +40,10 @@ function guest_arrive(guest){
 			.attr('src',window.document.location.href+guest.photo_url)
 			.attr('arrive','true')
 			.attr('guest_id',guest.qrcode_id)
-			.fadeIn();	
+			.load(function(){
+				console.log('load=ok');
+				$(this).fadeIn().show();	
+			})
 	}	
 }
 function guest_left(guest){
