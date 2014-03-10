@@ -15,7 +15,7 @@
 				<img class="img-item  img-4" guest_id="init" arrive="false" src=" ">
 				<img class="img-item  img-5" guest_id="init" arrive="false" src=" ">
 				<img class="img-item  img-6" guest_id="init" arrive="false" src=" ">
-				
+				<img class="img-load" style="display:none">
 		</div>
 	</div>
 </body>
@@ -29,5 +29,11 @@
 		for (var i = 0 ; i<data.length ; i++){
 			guest_arrive(data[i]);
 		}
+	socket.on('showRandom',function(data){
+		for (var i = 0 ; i<data.length ; i ++){
+			guest_arrive(data[i]);
+		}
 	})
+	})
+
 </script>

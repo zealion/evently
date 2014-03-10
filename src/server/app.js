@@ -197,6 +197,10 @@ app.delete('/event/:eid/guest/:id',function(req,res){
 	})	
 })
 
+app.get('/show',function(req,res){
+	showRandom();
+	res.json({'status':'success'})
+})
 app.get('/',function(req,res){
 	res.sendfile("/index.html",{root:__dirname+'/public'});
 	//do judgment and send data to web 
@@ -205,7 +209,17 @@ app.get('/api_test',function(req,res){
 	res.sendfile("/index_test.html",{root:__dirname+'/public'});
 	//do api_test
 });
-
+function showRandom(){
+	var sql = "SELECT * FROM " + settings.db_table + " WHERE is_arrived = 1 ORDER BY rand() LIMIT 1"
+	db.query(sql,function(err,rows){
+	if (!err) {
+        var arr = {};
+        io.sockets.emit('showRandom',rows);
+      } else {
+        console.log(err);
+      }
+    });
+}
 function reload(){
 	var sql = "SELECT * FROM " + settings.db_table + " WHERE is_arrived = 1 ORDER BY rand() LIMIT 6"
 	db.query(sql,function(err,rows){
