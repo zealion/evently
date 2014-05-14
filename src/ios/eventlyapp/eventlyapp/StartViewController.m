@@ -39,12 +39,11 @@
 {
     [super viewDidLoad];
     
-    [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg"]]];
-    [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title1"]]];
-
+    self.view.layer.contents = (id)[[UIImage imageNamed:@"start_bg"] CGImage];
     self.btnStart = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.btnStart.frame = CGRectMake(550.0, 550.0, 108.0, 108.0);
-    [self.btnStart setBackgroundImage:[UIImage imageNamed:@"btnStart"] forState:UIControlStateNormal];
+    self.btnStart.frame = CGRectMake(65, 350.0, 120.0, 120.0);
+    
+//    [self.btnStart setBackgroundImage:[UIImage imageNamed:@"btnStart"] forState:UIControlStateNormal];
     [self.btnStart addTarget:self action:@selector(clickBtnStart:withEvent:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btnStart];
     [self.btnStart setHidden:YES];

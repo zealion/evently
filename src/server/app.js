@@ -1,3 +1,4 @@
+
 var express = require('express');
 var fs = require('fs');
 var app = module.exports = express.createServer();
@@ -27,6 +28,9 @@ app.configure(function(){
 	app.use(express.static(__dirname + '/public'));
 })
 
+app.get('/touch',function(req,res){
+	res.json({'status':'success'})
+})
 //event/:id/guests - GET all guests
 app.get('/event/:id/guests',function(req,res){
 	console.log(req.params.id);
@@ -138,6 +142,28 @@ app.post('/event/:eid/guests',function(req,res){
 	});
 })
 
+
+app.post('/upload',function(req,res){
+	var new_name = get_time()+'.jpg';
+	var new_path = './public/uploads/photos';
+	var full_name = new_path + '/' + new_name ;
+	var node_path = 'uploads/photos/' + new_name;
+	var current_time = get_time();
+	fs.exists(new_path,function(exist){
+		if(!exist){
+			fs.fs.mkdirSync(new_path);
+		}
+		var is = fs.createReadStream(req.files.pic_data.path);
+		var os = fs.createWriteStream(full_name);
+		is.pipe(os);
+		is.on('end',function(errs){
+			fs.unlinkSync(req.files.pic_data.path);
+			if(!errs){
+				res.json({'status':'success'})
+			}
+		})
+	});
+})
 //event/:id/guest/:id - post update a guest , check
 app.post('/event/:eid/guest/:id',function(req,res){
 	var new_name = req.body.qrcode_id + '.jpg';
@@ -162,6 +188,7 @@ app.post('/event/:eid/guest/:id',function(req,res){
 					is_arrived:req.body.is_arrived,
 					updated_at:current_time
 				}
+
 				if ( Number(item.is_arrived) == 1 ){
 					item.is_arrived = 1;
 					item.arrived_at = current_time

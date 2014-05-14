@@ -21,7 +21,6 @@
 		67B9A0BF18C7020400321CAB /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67B9A0A318C7020400321CAB /* CoreData.framework */; };
 		67B9A0C718C7020400321CAB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 67B9A0C518C7020400321CAB /* InfoPlist.strings */; };
 		67B9A0C918C7020400321CAB /* eventlyappTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 67B9A0C818C7020400321CAB /* eventlyappTests.m */; };
-		67B9A0D418C70F8D00321CAB /* ScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 67B9A0D318C70F8D00321CAB /* ScanViewController.m */; };
 		67B9A0D618C70FB800321CAB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67B9A0D518C70FB800321CAB /* AVFoundation.framework */; };
 		67D397C918CACDF600DF3DA6 /* SnapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 67D397C818CACDF600DF3DA6 /* SnapViewController.m */; };
 		67E8782218CCACEB005616C5 /* btnBack.png in Resources */ = {isa = PBXBuildFile; fileRef = 67E8782118CCACEB005616C5 /* btnBack.png */; };
@@ -70,8 +69,6 @@
 		67B9A0C418C7020400321CAB /* eventlyappTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "eventlyappTests-Info.plist"; sourceTree = "<group>"; };
 		67B9A0C618C7020400321CAB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		67B9A0C818C7020400321CAB /* eventlyappTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = eventlyappTests.m; sourceTree = "<group>"; };
-		67B9A0D218C70F8D00321CAB /* ScanViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScanViewController.h; sourceTree = "<group>"; };
-		67B9A0D318C70F8D00321CAB /* ScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScanViewController.m; sourceTree = "<group>"; };
 		67B9A0D518C70FB800321CAB /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		67D397C718CACDF600DF3DA6 /* SnapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapViewController.h; sourceTree = "<group>"; };
 		67D397C818CACDF600DF3DA6 /* SnapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnapViewController.m; sourceTree = "<group>"; };
@@ -163,8 +160,6 @@
 				67B9A0B418C7020400321CAB /* Images.xcassets */,
 				67B9A0B118C7020400321CAB /* eventlyapp.xcdatamodeld */,
 				67B9A0A618C7020400321CAB /* Supporting Files */,
-				67B9A0D218C70F8D00321CAB /* ScanViewController.h */,
-				67B9A0D318C70F8D00321CAB /* ScanViewController.m */,
 				67D397C718CACDF600DF3DA6 /* SnapViewController.h */,
 				67D397C818CACDF600DF3DA6 /* SnapViewController.m */,
 				67EDA20118CC0B6400FAD56D /* StartViewController.h */,
@@ -369,7 +364,6 @@
 				67B9A0B018C7020400321CAB /* AppDelegate.m in Sources */,
 				67EDA20318CC0B6400FAD56D /* StartViewController.m in Sources */,
 				67B9A0AC18C7020400321CAB /* main.m in Sources */,
-				67B9A0D418C70F8D00321CAB /* ScanViewController.m in Sources */,
 				67D397C918CACDF600DF3DA6 /* SnapViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -429,7 +423,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Lingfei Song (3JW9D7P2Q2)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: 冰辉 董 (REY5975UQA)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -448,7 +442,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "467CA952-6534-47D1-BA92-D29604C7BAA7";
+				PROVISIONING_PROFILE = "016397A6-AAF1-43DB-95D8-44D1FEBC23E0";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -497,13 +491,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: 冰辉 董 (REY5975UQA)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: 冰辉 董 (REY5975UQA)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "eventlyapp/eventlyapp-Prefix.pch";
 				INFOPLIST_FILE = "eventlyapp/eventlyapp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "467CA952-6534-47D1-BA92-D29604C7BAA7";
+				PROVISIONING_PROFILE = "016397A6-AAF1-43DB-95D8-44D1FEBC23E0";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -598,7 +592,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "4A803C79-CF7C-431F-9E67-923B5AB18096";
+				PROVISIONING_PROFILE = "016397A6-AAF1-43DB-95D8-44D1FEBC23E0";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
@@ -618,7 +612,7 @@
 				INFOPLIST_FILE = "eventlyapp/eventlyapp-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "4A803C79-CF7C-431F-9E67-923B5AB18096";
+				PROVISIONING_PROFILE = "016397A6-AAF1-43DB-95D8-44D1FEBC23E0";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Distribute;

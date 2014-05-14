@@ -7,7 +7,19 @@ var guest_init = {
 }
 var date_update = new Date();
 
-// setInterval(autoReload,5000);
+function autoReload (){
+	$.ajax({
+		type:'get',
+		url:'http://101.69.177.92:4000/show',
+		success:function(data){
+			console.log('auto created');
+		},
+		fail:function(){
+			console.log('error');
+		}
+	})
+}
+setInterval(autoReload,1000*4);
 
 
 function getRandom(n)

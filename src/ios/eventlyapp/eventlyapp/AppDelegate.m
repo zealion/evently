@@ -9,18 +9,16 @@
 #import "AppDelegate.h"
 #import <AFHTTPRequestOperationManager.h>
 #import <Foundation/Foundation.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
 #import "StartViewController.h"
-#import "ScanViewController.h"
 #import "SnapViewController.h"
 
 @interface AppDelegate ()
 
 @property (strong, nonatomic) StartViewController *vc1;
-@property (strong, nonatomic) ScanViewController *vc2;
-@property (strong, nonatomic) SnapViewController *vc3;
-@property (strong, nonatomic) NSArray *guests;
-@property (strong, nonatomic) NSDictionary *currentGuest;
+@property (strong, nonatomic) SnapViewController *vc2;
+@property (strong, nonatomic) NSData *picData;
 
 @end
 
@@ -31,25 +29,20 @@
     // settings must present to start app
     NSUserDefaults * standardUserDefaults = [NSUserDefaults standardUserDefaults];
     NSMutableString * server_url = [[standardUserDefaults objectForKey:@"server_url"] mutableCopy];
-    NSString * event_id = [standardUserDefaults objectForKey:@"event_id"];
-    if (!server_url || !event_id || [server_url isEqualToString:@"http://"]) {
-        
+    if ([server_url isEqualToString:@"http://"]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"错误" message:@"请检查App设置是否正确" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
         return NO;
     }
 
     self.vc1 = [[StartViewController alloc] init];
-    self.vc2 = [[ScanViewController alloc] init];
-    self.vc3 = [[SnapViewController alloc] init];
+    self.vc2 = [[SnapViewController alloc] init];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
     
-    [self step1];
-    
     [self.window makeKeyAndVisible];
-    
+    [self step1];
     return YES;
 }
 
@@ -89,13 +82,12 @@
     
     NSUserDefaults * standardUserDefaults = [NSUserDefaults standardUserDefaults];
     NSMutableString * server_url = [[standardUserDefaults objectForKey:@"server_url"] mutableCopy];
-    NSString * event_id = [standardUserDefaults objectForKey:@"event_id"];
 
     // get all guests
     if (![server_url hasSuffix:@"/"]) {
         [[server_url mutableCopy] appendFormat:@"%c", '/'];
     }
-    [server_url appendFormat:@"event/%@/guests", event_id];
+    [server_url appendFormat:@"touch"];
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = TRUE;
     
@@ -103,18 +95,12 @@
     [manager GET:server_url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         BOOL success = [responseObject objectForKey:@"status"];
         if(success){
-            self.guests = [responseObject objectForKey:@"body"];
-            
             [self.vc1 enable];
-            
             [UIApplication sharedApplication].networkActivityIndicatorVisible = FALSE;
-            
-            NSLog(@"got %tu guests", [self.guests count]);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        [[[UIAlertView alloc] initWithTitle:@"错误" message:@"嘉宾数据读取失败，请退出重试！" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        
+        [[[UIAlertView alloc] initWithTitle:@"错误" message:@"服务器链接失败，请退出重试！" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
         NSLog(@"Error: %@", error);
     }];
 
@@ -126,11 +112,6 @@
     self.vc2.delegate = self;
 }
 
-- (void) step3
-{
-    self.window.rootViewController = self.vc3;
-    self.vc3.delegate = self;
-}
 
 #pragma mark -
 #pragma mark ViewController delegates
@@ -141,67 +122,27 @@
     [self step2];
 }
 
-- (void) scanViewController:vc didSuccessfullyScan:(NSString *)scannedId {
-    NSLog(@"ID: %@", scannedId);
-    
-    __block BOOL found = NO;
-    __block NSDictionary *dict = nil;
-    
-    [self.guests enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        dict = (NSDictionary *)obj;
-        NSString *qrcode_id = [dict valueForKey:@"qrcode_id"];
-        if ([qrcode_id isEqualToString:scannedId]) {
-            found = YES;
-            *stop = YES;
-        }
-    }];
-    
-    if (found) {
-        NSString *name = [NSString stringWithFormat:@"姓名/Name:  %@", [[dict objectForKey:@"name"] isEqual:[NSNull null]]?@"":[dict valueForKey:@"name"]];
-        NSString *company = [NSString stringWithFormat:@"公司/Company:  %@", [[dict objectForKey: @"company"] isEqual:[NSNull null]]?@"":[dict valueForKey: @"company"]];
-        NSString *email = [NSString stringWithFormat:@"邮箱/Email:  %@", [[dict valueForKey: @"email"] isEqual:[NSNull null]]?@"":[dict valueForKey: @"email"]];
-        [vc scanValidated:YES withName:name company:company email:email];
-        
-        self.currentGuest = dict;
-    }
-    else
-    {
-        [vc scanValidated:NO withName:nil company:nil email:nil];
-    }
-}
 
-- (void) scanViewController:(ScanViewController *) vc didClickBackButton:(UIButton*) btn
+- (void) snapViewController:(SnapViewController *)vc didClickBackButton:(UIButton *)btn
 {
     [self step1];
 }
-
-- (void) snapViewController:(ScanViewController *) vc didClickBackButton:(UIButton*) btn
-{
-    [self step2];
-}
-
-- (void) scanViewController:(ScanViewController *) vc didClickNextButton:(UIButton*) btn
-{
-    [btn setHidden:YES];
-    [self step3];
-}
-
 - (void) snapViewController:(SnapViewController *) vc didClickConfirmButton:(UIButton *)btn withJpegData:(NSData *)data
 {
-    if(self.currentGuest==nil) return;
-    
-    NSString *event_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"event_id"];
+    [self setPicData:data];
     NSMutableString *server_url = [[[NSUserDefaults standardUserDefaults] stringForKey:@"server_url"] mutableCopy];
     if (![server_url hasSuffix:@"/"]) {
         [[server_url mutableCopy] appendFormat:@"%c", '/'];
     }
     
-    NSString *qrcode_id = [self.currentGuest valueForKey:@"qrcode_id"];
-    
-    [server_url appendFormat:@"event/%@/guest/%@", event_id, qrcode_id];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"是否发送照片至邮箱" delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是",nil];
+    [alert show];
+
+
+    [server_url appendFormat:@"upload"];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    NSDictionary *parameters = @{@"qrcode_id": qrcode_id, @"is_arrived": @1};
+    NSDictionary *parameters = @{};
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = TRUE;
     [manager POST:server_url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
@@ -210,12 +151,52 @@
         NSLog(@"Success: %@", responseObject);
         
         [UIApplication sharedApplication].networkActivityIndicatorVisible = FALSE;
-
+        
         [self step1];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
+        
     }];
+    
+
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1) {
+        MFMailComposeViewController *mail = [[MFMailComposeViewController alloc] init];
+        mail.mailComposeDelegate = self;
+        [mail setSubject:@"VF-活动照片"];
+        [mail setMessageBody:@"活动照片" isHTML:NO];
+        [mail addAttachmentData:self.picData mimeType:@"image/jpg" fileName:@"test.jpg"];
+        [self.window.rootViewController presentViewController:mail animated:YES completion:nil];
+    }
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    //关闭邮件发送窗口
+    [self.window.rootViewController dismissModalViewControllerAnimated:YES];
+    NSString *msg;
+    switch (result) {
+        case MFMailComposeResultCancelled:
+            msg = @"用户取消编辑邮件";
+            break;
+        case MFMailComposeResultSaved:
+            msg = @"用户成功保存邮件";
+            break;
+        case MFMailComposeResultSent:
+            msg = @"用户点击发送，将邮件放到队列中，还没发送";
+            break;
+        case MFMailComposeResultFailed:
+            msg = @"用户试图保存或者发送邮件失败";
+            break;
+        default:
+            msg = @"";
+            break;
+    }
+    
 }
 
 @end

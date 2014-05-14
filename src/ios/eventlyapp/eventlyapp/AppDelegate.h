@@ -8,10 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "StartViewController.h"
-#import "ScanViewController.h"
 #import "SnapViewController.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, ScanViewControllerDelegate, StartViewControllerDelegate, SnapViewControllerDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, StartViewControllerDelegate, SnapViewControllerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 

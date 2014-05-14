@@ -86,31 +86,29 @@
 
 - (void) setupUI
 {
-    [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg"]]];
-    [self.view addSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title3"]]];
-    
+    self.view.layer.contents = (id)[[UIImage imageNamed:@"snap_bg"] CGImage];
     self.btnBack = [UIButton buttonWithType:UIButtonTypeCustom];
     self.btnBack.frame = CGRectMake(20.0, 20.0, 56.0, 56.0);
-    [self.btnBack setBackgroundImage:[UIImage imageNamed:@"btnBack"] forState:UIControlStateNormal];
+    [self.btnBack setBackgroundImage:[UIImage imageNamed:@"btn_back"] forState:UIControlStateNormal];
     [self.btnBack addTarget:self action:@selector(clickBtnBack) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btnBack];
     
     self.btnTake = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.btnTake.frame = CGRectMake(600.0, 480.0, 108.0, 108.0);
-    [self.btnTake setBackgroundImage:[UIImage imageNamed:@"btnTake"] forState:UIControlStateNormal];
+    self.btnTake.frame = CGRectMake(500.0, 815.0, 65.0, 65.0);
+    [self.btnTake setBackgroundImage:[UIImage imageNamed:@"btn_take"] forState:UIControlStateNormal];
     [self.btnTake addTarget:self action:@selector(capture) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btnTake];
     
     self.btnRetake = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.btnRetake.frame = CGRectMake(600.0, 480.0, 108.0, 108.0);
-    [self.btnRetake setBackgroundImage:[UIImage imageNamed:@"btnRetake"] forState:UIControlStateNormal];
+    self.btnRetake.frame = CGRectMake(500.0, 815.0, 65.0, 65.0);
+    [self.btnRetake setBackgroundImage:[UIImage imageNamed:@"btn_retake"] forState:UIControlStateNormal];
     [self.btnRetake addTarget:self action:@selector(clickBtnRetake:withEvent:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btnRetake];
     [self.btnRetake setHidden:YES];
     
     self.btnConfirm = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.btnConfirm.frame = CGRectMake(600.0, 600.0, 108.0, 108.0);
-    [self.btnConfirm setBackgroundImage:[UIImage imageNamed:@"btnConfirm"] forState:UIControlStateNormal];
+    self.btnConfirm.frame = CGRectMake(580, 815, 65.0, 65.0);
+    [self.btnConfirm setBackgroundImage:[UIImage imageNamed:@"btn_confirm"] forState:UIControlStateNormal];
     [self.btnConfirm addTarget:self action:@selector(clickBtnConfirm:withEvent:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btnConfirm];
     [self.btnConfirm setHidden:YES];
@@ -180,6 +178,17 @@
 - (void) setupCapture;
 {
     self.device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    
+    
+    NSArray *cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    for (AVCaptureDevice *device in cameras)
+    {
+        if (device.position == AVCaptureDevicePositionFront){
+            self.device = device ;
+            break;
+        }
+    }
+
     self.backCameraInput = [AVCaptureDeviceInput deviceInputWithDevice:self.device error:nil];
     
     self.output = [[AVCaptureStillImageOutput alloc] init];
@@ -194,7 +203,7 @@
     
     self.preview = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     self.preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    self.preview.frame = CGRectMake(self.view.center.x-200, 200, 400, 400);
+    self.preview.frame = CGRectMake(140, 205, 490, 585);
     
     AVCaptureConnection *con = self.preview.connection;
     con.videoOrientation = AVCaptureVideoOrientationPortrait;
@@ -282,6 +291,7 @@
          
          /* crop to square */
          CGFloat x = 0, y = 0, width = image1.size.width;
+
          if(image1.size.width>image1.size.height){
              x = (image1.size.width - image1.size.height)/2.0;
              width = image1.size.height;
@@ -290,12 +300,13 @@
              y = (image1.size.height - image1.size.width)/2.0;
          }
          CGImageRef imageRef = CGImageCreateWithImageInRect(image1.CGImage, CGRectMake(x, y, width, width));
+
          UIImage *image2 = [UIImage imageWithCGImage:imageRef];
          CGImageRelease(imageRef);
          
          // display the image
          [self.capturedPhotoView setHidden:NO];
-         self.capturedPhotoView.image = image2;
+         self.capturedPhotoView.image = image1;
          
          // test save to album
          //UIImageWriteToSavedPhotosAlbum(image2, nil, nil, nil);
@@ -335,8 +346,9 @@
     CGFloat boundHeight;
     UIImageOrientation orient = image.imageOrientation;
     switch(orient) {
-            
+
         case UIImageOrientationUp: //EXIF = 1
+
             transform = CGAffineTransformIdentity;
             break;
             
@@ -397,14 +409,14 @@
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-    if (orient == UIImageOrientationRight || orient == UIImageOrientationLeft) {
-        CGContextScaleCTM(context, -scaleRatio, scaleRatio);
-        CGContextTranslateCTM(context, -height, 0);
-    }
-    else {
-        CGContextScaleCTM(context, scaleRatio, -scaleRatio);
-        CGContextTranslateCTM(context, 0, -height);
-    }
+//    if (orient == UIImageOrientationRight || orient == UIImageOrientationLeft) {
+//        CGContextScaleCTM(context, -scaleRatio, scaleRatio);
+//        CGContextTranslateCTM(context, -height, 0);
+//    }
+//    else {
+//        CGContextScaleCTM(context, scaleRatio, -scaleRatio);
+//        CGContextTranslateCTM(context, 0, -height);
+//    }
     
     CGContextConcatCTM(context, transform);
     
