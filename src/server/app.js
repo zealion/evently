@@ -159,6 +159,11 @@ app.post('/upload',function(req,res){
 		is.on('end',function(errs){
 			fs.unlinkSync(req.files.pic_data.path);
 			if(!errs){
+				var item = {
+					photo_url:node_path,
+					update_at:current_time
+				};
+				io.sockets.emit('do_arrive',item);
 				res.json({'status':'success'})
 			}
 		})
