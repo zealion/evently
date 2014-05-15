@@ -203,7 +203,7 @@
     
     self.preview = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     self.preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    self.preview.frame = CGRectMake(140, 205, 490, 585);
+    self.preview.frame = CGRectMake(140, 205, 480, 640);
     
     AVCaptureConnection *con = self.preview.connection;
     con.videoOrientation = AVCaptureVideoOrientationPortrait;
