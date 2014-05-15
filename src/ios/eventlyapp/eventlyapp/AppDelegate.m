@@ -136,7 +136,7 @@
     }
     
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"是否发送照片至邮箱" delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是",nil];
-    [alert show];
+
 
 
     [server_url appendFormat:@"upload"];
@@ -149,10 +149,8 @@
         [formData appendPartWithFileData:data name:@"pic_data" fileName:@"test.jpg" mimeType:@"image/jpg"];
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Success: %@", responseObject);
-        
+        [alert show]; //照片发送完毕后 询问发送照片
         [UIApplication sharedApplication].networkActivityIndicatorVisible = FALSE;
-        
-        [self step1];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
@@ -171,6 +169,8 @@
         [mail setMessageBody:@"活动照片" isHTML:NO];
         [mail addAttachmentData:self.picData mimeType:@"image/jpg" fileName:@"test.jpg"];
         [self.window.rootViewController presentViewController:mail animated:YES completion:nil];
+    } else {
+        [self step1];
     }
 }
 
@@ -196,6 +196,7 @@
             msg = @"";
             break;
     }
+    [self step1];
     
 }
 

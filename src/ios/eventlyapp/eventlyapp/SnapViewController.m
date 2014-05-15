@@ -88,26 +88,26 @@
 {
     self.view.layer.contents = (id)[[UIImage imageNamed:@"snap_bg"] CGImage];
     self.btnBack = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.btnBack.frame = CGRectMake(20.0, 20.0, 56.0, 56.0);
+    self.btnBack.frame = CGRectMake(50.0, 50.0, 65.0, 65.0);
     [self.btnBack setBackgroundImage:[UIImage imageNamed:@"btn_back"] forState:UIControlStateNormal];
     [self.btnBack addTarget:self action:@selector(clickBtnBack) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btnBack];
     
     self.btnTake = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.btnTake.frame = CGRectMake(500.0, 815.0, 65.0, 65.0);
+    self.btnTake.frame = CGRectMake(500.0, 870.0, 65.0, 65.0);
     [self.btnTake setBackgroundImage:[UIImage imageNamed:@"btn_take"] forState:UIControlStateNormal];
     [self.btnTake addTarget:self action:@selector(capture) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btnTake];
     
     self.btnRetake = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.btnRetake.frame = CGRectMake(500.0, 815.0, 65.0, 65.0);
+    self.btnRetake.frame = CGRectMake(500.0, 870.0, 65.0, 65.0);
     [self.btnRetake setBackgroundImage:[UIImage imageNamed:@"btn_retake"] forState:UIControlStateNormal];
     [self.btnRetake addTarget:self action:@selector(clickBtnRetake:withEvent:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btnRetake];
     [self.btnRetake setHidden:YES];
     
     self.btnConfirm = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.btnConfirm.frame = CGRectMake(580, 815, 65.0, 65.0);
+    self.btnConfirm.frame = CGRectMake(580, 870, 65.0, 65.0);
     [self.btnConfirm setBackgroundImage:[UIImage imageNamed:@"btn_confirm"] forState:UIControlStateNormal];
     [self.btnConfirm addTarget:self action:@selector(clickBtnConfirm:withEvent:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btnConfirm];
