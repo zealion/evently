@@ -4,18 +4,43 @@
 	<link href="css/index.css" rel="stylesheet">    
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/marquee.js"></script>
 	<script type="text/javascript" src="js/index_test.js"></script>
+
 </head>
 <body>
 	<div class="content">
 		<div class="img-display">
-				<img class="img-item  img-1" guest_id="init" arrive="false" src=" ">
+				<div class="img-small-list marquee">
+					<img src="" alt="" class="img-small img-item">
+					<img src="" alt="" class="img-small img-item">
+					<img src="" alt="" class="img-small img-item">
+					<img src="" alt="" class="img-small img-item">
+					<img src="" alt="" class="img-small img-item">
+					<img src="" alt="" class="img-small img-item">
+					<img src="" alt="" class="img-small img-item">
+					<img src="" alt="" class="img-small img-item">
+					<img src="" alt="" class="img-small img-item">
+					<img src="" alt="" class="img-small img-item">
+					
+				</div>
+				
+
+				<div class="img-huge-list">
+					<img src="" alt="" class="img-item img-huge">
+					<img src="" alt="" class="img-item img-huge">
+					<img src="" alt="" class="img-item img-huge">
+					<img src="" alt="" class="img-item img-huge">
+				</div>
+
+
+				<!-- <img class="img-item  img-1" guest_id="init" arrive="false" src=" ">
 				<img class="img-item  img-2" guest_id="init" arrive="false" src=" ">
 				<img class="img-item  img-3"  guest_id="init" arrive="false" src=" ">
 				<img class="img-item  img-4" guest_id="init" arrive="false" src=" ">
 				<img class="img-item  img-5" guest_id="init" arrive="false" src=" ">
 				<img class="img-item  img-6" guest_id="init" arrive="false" src=" ">
-				<img class="img-load" style="display:none">
+				<img class="img-load" style="display:none"> -->
 		</div>
 	</div>
 </body>
@@ -23,6 +48,7 @@
 <script>
 	var socket = io.connect(window.document.location.href);
 	socket.on('do_arrive',function(data){
+		guest = data ;
 		guest_arrive(data);
 	})
 	socket.on('reload',function(data){
@@ -35,5 +61,7 @@
 		}
 	})
 	})
+
+
 
 </script>
