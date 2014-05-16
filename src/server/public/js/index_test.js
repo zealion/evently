@@ -79,11 +79,12 @@ function guest_move(){
 	console.log(small_index);
 	$('.img-small').eq(small_index%10).attr('src','/'+guest.photo_url).show()
 	$('.img-small').eq(small_index%10+10).attr('src','/'+guest.photo_url).show()	
-	small_index++;
-	if(small_index == 9){
+	
+	if(small_index == 10){
 		console.log('start');
 		start_marquee();
 	}
+	small_index++;
 	
 	
 }
