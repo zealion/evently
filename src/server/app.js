@@ -9,7 +9,6 @@ io.set('log level',1)
 
 io.sockets.on('connection',function(socket){
 	console.log('socket_start');
-	reload();
 })
 
 
@@ -22,6 +21,7 @@ app.configure(function(){
 app.get('/touch',function(req,res){
 	res.json({'status':'success'})
 })
+
 
 app.post('/upload',function(req,res){
 	var new_name = get_time()+'.jpg';
@@ -57,15 +57,15 @@ app.get('/',function(req,res){
 });
 
 function showRandom(){
-	var sql = "SELECT * FROM " + settings.db_table + " WHERE is_arrived = 1 ORDER BY rand() LIMIT 1"
-	db.query(sql,function(err,rows){
-	if (!err) {
-        var arr = {};
-        io.sockets.emit('showRandom',rows);
-      } else {
-        console.log(err);
-      }
-    });
+	// var sql = "SELECT * FROM " + settings.db_table + " WHERE is_arrived = 1 ORDER BY rand() LIMIT 1"
+	// db.query(sql,function(err,rows){
+	// if (!err) {
+ //        var arr = {};
+ //        io.sockets.emit('showRandom',rows);
+ //      } else {
+ //        console.log(err);
+ //      }
+ //    });
 }
 function reload(){
 	
@@ -79,6 +79,7 @@ function reload(){
  //      }
  //    });
 }
+
 
 function get_time(){
 	var d=new Date();

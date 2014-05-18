@@ -409,14 +409,7 @@
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-//    if (orient == UIImageOrientationRight || orient == UIImageOrientationLeft) {
-//        CGContextScaleCTM(context, -scaleRatio, scaleRatio);
-//        CGContextTranslateCTM(context, -height, 0);
-//    }
-//    else {
-//        CGContextScaleCTM(context, scaleRatio, -scaleRatio);
-//        CGContextTranslateCTM(context, 0, -height);
-//    }
+    CGContextScaleCTM(context, scaleRatio, scaleRatio);
     
     CGContextConcatCTM(context, transform);
     
