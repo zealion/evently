@@ -12,3 +12,6 @@ event/:id/guest/:id - DELETE a guest
 GUEST_CHANGED (guest object)
 GUEST_ADDED (guest object)
 GUEST_DELETED (guest object)
+
+
+reload
