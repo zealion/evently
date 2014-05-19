@@ -4,6 +4,8 @@ var fs = require('fs');
 var app = module.exports = express.createServer();
 var io = require('socket.io').listen(app);
 var settings = require('./example.settings');
+var uuid = require('nuuid');
+
 
 io.set('log level',1)
 
@@ -24,7 +26,7 @@ app.get('/touch',function(req,res){
 
 
 app.post('/upload',function(req,res){
-	var new_name = get_time()+'.jpg';
+	var new_name = uuid.id('entropy-salt')+'.jpg';
 	var new_path = './public/uploads/photos';
 	var full_name = new_path + '/' + new_name ;
 	var node_path = 'uploads/photos/' + new_name;
@@ -53,19 +55,10 @@ app.post('/upload',function(req,res){
 	
 app.get('/',function(req,res){
 	res.sendfile("/index.html",{root:__dirname+'/public'});
-	//do judgment and send data to web 
 });
 
 function showRandom(){
-	// var sql = "SELECT * FROM " + settings.db_table + " WHERE is_arrived = 1 ORDER BY rand() LIMIT 1"
-	// db.query(sql,function(err,rows){
-	// if (!err) {
- //        var arr = {};
- //        io.sockets.emit('showRandom',rows);
- //      } else {
- //        console.log(err);
- //      }
- //    });
+
 }
 function reload(){
 	
@@ -87,15 +80,6 @@ function get_time(){
 	return dateString
 }
 
-// app.get("/guest/:id", function(req, res){
-// 	console.log(req.params.id);
-//     // get qrcode_id, photo, is_arrived, etc. from req
 
-//     // save photo
-
-//     // update photo_url, is_arrived on qrcode_id
-
-//     // socket.emit("GUEST_CHANGED", obj); obj has qrcode_id, photo_url, is_arrived (if changed from 0 to 1)
-// });
 
 app.listen(4000);
