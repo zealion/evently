@@ -32,7 +32,7 @@ $(document).on('ready',function(){
 function start_marquee(){
 	$('.marquee').marquee({
     //speed in milliseconds of the marquee
-    duration: 10000,
+    duration: 20000,
     //gap in pixels between the tickers
     gap: 12,
     //time in milliseconds before the marquee will start animating
