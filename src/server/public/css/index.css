@@ -22,7 +22,7 @@
 .img-small-list {
 	width: 1100px;
 	margin: 0 auto;
-	padding-top: 120px;
+	padding-top: 150px;
 	max-height:300px; 
 	min-height: 180px;
 }
@@ -39,14 +39,14 @@
 
 .img-huge-list{
 	height: 320px;
-	width: 1000px;
+	width: 1050px;
 	margin: 0 auto;
 }
 
 .img-huge{
-	width: 150px;
-	height: 200px;
-	margin-left: 7%;
+	width: 240px;
+	height: 320px;
+	margin-left: 30px;
 }
 
 .img-display{

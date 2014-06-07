@@ -165,8 +165,8 @@
     if (buttonIndex == 1) {
         MFMailComposeViewController *mail = [[MFMailComposeViewController alloc] init];
         mail.mailComposeDelegate = self;
-        [mail setSubject:@"VF-活动照片"];
-        [mail setMessageBody:@"活动照片" isHTML:NO];
+        [mail setSubject:@"2014延峰江森家庭日"];
+        [mail setMessageBody:@"" isHTML:NO];
         [mail addAttachmentData:self.picData mimeType:@"image/jpg" fileName:@"test.jpg"];
         [self.window.rootViewController presentViewController:mail animated:YES completion:nil];
     } else {
